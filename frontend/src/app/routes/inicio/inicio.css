@@ -18,13 +18,12 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  div {
-    text-align: center;
-  }
+  text-align: center;
   > div:first-child {
     border-bottom: 1px solid var(--mat-sys-outline);
     font-weight: bold;
     height: 56px;
+    padding: 0 1rem;
   }
   > div:last-child {
     flex: 1 1 auto;
@@ -140,6 +139,9 @@ tr {
   &:last-child td {
     border-bottom-right-radius: 4px;
   }
+  td:first-child {
+    display: grid;
+  }
 }
 
 th {
@@ -154,6 +156,9 @@ th {
 
 td {
   p {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     padding: 1rem 0;
   }
   &:not(:first-child) {
@@ -211,6 +216,9 @@ form {
 }
 
 @media (min-width: 600px) and (max-width: 960px) {
+  .resumen-estadistico {
+    flex-direction: column;
+  }
   .seccion {
     padding: 1.5rem 1.5rem 0;
     flex-wrap: wrap;
@@ -219,6 +227,9 @@ form {
 }
 
 @media (max-width: 600px) {
+  .resumen-estadistico {
+    flex-direction: column;
+  }
   .seccion {
     flex-direction: column;
     padding: 1.5rem 0 0;

@@ -44,7 +44,7 @@ export class GraficoPie {
   chartOption: EChartsCoreOption = {};
   temaOscuro = {
     darkMode: true,
-    color: ['#35862f', '#d5aa00', '#d52b33'],
+    color: ['#35862f', '#d52b33', '#d5aa00'],
     tooltip: {
       backgroundColor: '#1f201d',
       textStyle: {

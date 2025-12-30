@@ -83,6 +83,7 @@ export class Inicio implements OnInit {
   cambiarFormaAnlisis(nuevoValor: string) {
     this.formaAnalisis = nuevoValor;
     sessionStorage.setItem('forma-analisis', nuevoValor);
+    this._reiniciarFormulario();
   }
   cambiarArchivoGuardado(archivos: FileList | null) {
     if (archivos && archivos.length > 0) {
@@ -157,6 +158,10 @@ export class Inicio implements OnInit {
       {
         value: positivo,
         name: 'positivo',
+      },
+      {
+        value: negativo,
+        name: 'negativo',
       },
     ]);
   }
