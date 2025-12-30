@@ -1,0 +1,10 @@
+<footer>
+  <span>GRUPO 31</span>
+  <ul>
+    @for (integrante of integrantes; track $index) {
+      <li>
+        <a [href]="integrante.linkedin">{{ integrante.fullName }}</a>
+      </li>
+    }
+  </ul>
+</footer>

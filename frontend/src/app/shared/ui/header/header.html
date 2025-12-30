@@ -1,0 +1,13 @@
+<header>
+  <h1><span>SENTIMENT</span><span>API</span></h1>
+  <div class="campos-seleccion">
+    <app-campo-seleccion
+      [seleccion]="modo"
+      [valores]="modos"
+      (cambiosSeleccion)="cambiarModo($event)" />
+    <app-campo-seleccion
+      [seleccion]="idioma"
+      [valores]="idiomas"
+      (cambiosSeleccion)="cambiarIdioma($event)" />
+  </div>
+</header>

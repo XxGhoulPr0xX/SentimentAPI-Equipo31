@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+
+.demo-chart {
+  display: flex;
+  justify-content: center;
+  height: 300px;
+}

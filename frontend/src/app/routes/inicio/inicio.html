@@ -1,0 +1,241 @@
+<app-header></app-header>
+<main>
+  <mat-tab-group
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    class="secciones">
+    <mat-tab label="ANALIZAR">
+      <div class="seccion">
+        <div class="configuracion">
+          <form (ngSubmit)="analizarComentarios()">
+            <div class="opciones">
+              <p>
+                <span>Primero</span>, selecciona la forma que desea analizar.
+              </p>
+              <app-campo-seleccion
+                appearance="outline"
+                [seleccion]="formaAnalisis"
+                [valores]="formas"
+                (cambiosSeleccion)="cambiarFormaAnlisis($event)" />
+            </div>
+            <div class="datos">
+              @if (formaAnalisis === 'masiva') {
+                <p><span>Segundo</span>, sube el archivo de tipo CSV.</p>
+                <div class="campo-archivo">
+                  <button
+                    type="button"
+                    class="boton-campo-archivo"
+                    matButton="outlined">
+                    Subir archivo
+                    <label for="file"></label>
+                    <input
+                      id="file"
+                      type="file"
+                      accept=".xlsx, .xls, .csv"
+                      (change)="cambiarArchivoGuardado($event.target.files)" />
+                  </button>
+                  <span class="nombre-archivo">
+                    @if (archivoCargado()) {
+                      <button
+                        type="button"
+                        matIconButton
+                        aria-label="Eliminar archivo cargado"
+                        (click)="eliminarArchivoCargado()">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                      {{ archivoCargado()?.name }}
+                    } @else {
+                      Ningún archivo seleccionado
+                    }
+                  </span>
+                </div>
+                <button
+                  type="submit"
+                  matButton="filled"
+                  class="boton"
+                  [disabled]="archivoCargado() === null">
+                  ANALIZAR COMENTARIOS
+                </button>
+              } @else {
+                <p><span>Segundo</span>, ingresa el comentario.</p>
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="campo-textarea">
+                  <textarea
+                    matInput
+                    [formControl]="textareaFormControl"
+                    placeholder="Por ejemplo. Me pareció interesante...">
+                  </textarea>
+                  @if (textareaFormControl.hasError('required')) {
+                    <mat-error>
+                      Comentario <strong>obligatorio</strong>
+                    </mat-error>
+                  }
+                </mat-form-field>
+                <button
+                  type="submit"
+                  matButton="filled"
+                  class="boton"
+                  [disabled]="textareaFormControl.invalid">
+                  ANALIZAR COMENTARIO
+                </button>
+              }
+            </div>
+          </form>
+        </div>
+        <div class="resultados">
+          <p>
+            <span>Tercero</span> examina el resultado del análisis realizado.
+          </p>
+          @if (formaAnalisis === 'masiva') {
+            <div class="resumen-estadistico">
+              <div class="resumen-columna">
+                <div><span>Total de comentarios</span></div>
+                <div>{{ dataSource.length }}</div>
+              </div>
+              <div class="resumen-columna">
+                <div><span>Distribución de sentimientos</span></div>
+                <div>
+                  <app-grafico-pie [datos]="datosGraficoPie()" />
+                </div>
+              </div>
+              <div class="resumen-columna">
+                <div><span>Sentimiento predominante</span></div>
+                <div>
+                  <div
+                    [ngClass]="{
+                      'etiqueta-positivo':
+                        sentimientoPredominante() === 'positivo',
+                      'etiqueta-neutro': sentimientoPredominante() === 'neutro',
+                      'etiqueta-negativo':
+                        sentimientoPredominante() === 'negativo',
+                    }"
+                    class="etiqueta">
+                    {{ sentimientoPredominante() }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+          <div class="tabla-resultados">
+            @if (formaAnalisis === 'masiva') {
+              <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="comentario">
+                  <th mat-header-cell *matHeaderCellDef>Comentario</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p>{{ element.comentario }}</p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="sentimiento">
+                  <th mat-header-cell *matHeaderCellDef>Sentimiento</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div></div>
+                    <div
+                      [ngClass]="{
+                        'etiqueta-positivo': element.sentimiento === 'positivo',
+                        'etiqueta-neutro': element.sentimiento === 'neutro',
+                        'etiqueta-negativo': element.sentimiento === 'negativo',
+                      }"
+                      class="etiqueta">
+                      {{ element.sentimiento }}
+                    </div>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="probabilidad">
+                  <th mat-header-cell *matHeaderCellDef>Probabilidad</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.probabilidad }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="acciones" stickyEnd>
+                  <th
+                    mat-header-cell
+                    *matHeaderCellDef
+                    aria-label="row actions">
+                    &nbsp;
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <button
+                      type="button"
+                      matIconButton
+                      aria-label="Eliminar registro"
+                      (click)="eliminarRegistro(element.id)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="displayedColumnsTableMasiva"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="
+                    let row;
+                    columns: displayedColumnsTableMasiva
+                  "></tr>
+              </table>
+              <mat-paginator
+                showFirstLastButtons
+                aria-label="Seleccionar pagina"
+                hidePageSize="true"
+                pageSize="10">
+              </mat-paginator>
+            } @else {
+              <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="comentario">
+                  <th mat-header-cell *matHeaderCellDef>Comentario</th>
+                  <td mat-cell *matCellDef="let element">
+                    <p>{{ element.comentario }}</p>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="sentimiento">
+                  <th mat-header-cell *matHeaderCellDef>Sentimiento</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div></div>
+                    <div
+                      [ngClass]="{
+                        'etiqueta-positivo': element.sentimiento === 'positivo',
+                        'etiqueta-neutro': element.sentimiento === 'neutro',
+                        'etiqueta-negativo': element.sentimiento === 'negativo',
+                      }"
+                      class="etiqueta">
+                      {{ element.sentimiento }}
+                    </div>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="probabilidad">
+                  <th mat-header-cell *matHeaderCellDef>Probabilidad</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.probabilidad }}
+                  </td>
+                </ng-container>
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="displayedColumnsTableIndividual"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="
+                    let row;
+                    columns: displayedColumnsTableIndividual
+                  "></tr>
+              </table>
+            }
+          </div>
+          <div class="botones">
+            <!-- <button
+              matButton="filled"
+              class="boton"
+              (click)="guardarAnalisis()">
+              GUARDAR ANÁLISIS
+            </button> -->
+            <button matButton class="boton" (click)="descartarAnalisis()">
+              DESCARTAR ANÁLISIS
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</main>
+<app-footer></app-footer>
