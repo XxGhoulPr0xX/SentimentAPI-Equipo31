@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import com.equipo31.app.dto.StatsResponse;
 import com.equipo31.app.repository.SentimentRecordRepository;

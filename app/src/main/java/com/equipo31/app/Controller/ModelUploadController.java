@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,6 @@ public class ModelUploadController {
     return ResponseEntity.ok(Map.of(
         "message", "Modelo guardado",
         "file", name,
-        "url", "/models/" + name
-    ));
+        "url", "/models/" + name));
   }
 }

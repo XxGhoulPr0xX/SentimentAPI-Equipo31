@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import com.equipo31.app.dto.SentimentRequest;
 import com.equipo31.app.dto.SentimentResponse;
@@ -39,8 +39,13 @@ public class SentimentController {
         log.info("Resultado del análisis - Etiqueta: {}, Probabilidad: {}", label, prob);
 
         // Guardar el registro en la base de datos
-        repo.save(new SentimentRecord(req.getText(), label, prob));
+        SentimentRecord sentimentRecord = repo.save(new SentimentRecord(req.getText(), label, prob));
 
-        return ResponseEntity.ok(new SentimentResponse(label, prob));
+        return ResponseEntity.ok(new SentimentResponse(
+                sentimentRecord.getId(),
+                sentimentRecord.getText(),
+                sentimentRecord.getPrevision(),
+                sentimentRecord.getProbabilidad(),
+                sentimentRecord.getCreatedAt()));
     }
 }
