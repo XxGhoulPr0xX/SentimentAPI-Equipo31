@@ -1,1 +1,6 @@
 .vscode
+target/
+*.class
+*.jar
+*.log
+.idea/
