@@ -1,71 +1,74 @@
 # Frontend
 
-This project was generated using
-[Angular CLI](https://github.com/angular/angular-cli) version 20.3.13.
+Este proyecto fue generado con
+[Angular CLI](https://github.com/angular/angular-cli) versión **20.3.13**.
 
-## Development server
+## Servidor de desarrollo
 
-To start a local development server, run:
+Para iniciar un servidor de desarrollo local, ejecuta:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to
-`http://localhost:4200/`. The application will automatically reload whenever you
-modify any of the source files.
+Una vez arrancado, abre tu navegador en `http://localhost:4200/`. La aplicación
+se recargará automáticamente cuando modifiques los archivos fuente.
 
-## Code scaffolding
+## Información y estado actual del directorio `frontend`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new
-component, run:
+**Resumen:** El frontend está implementado en Angular y proporciona la interfaz
+para consumir el servicio de análisis de sentimientos. A continuación se
+describen los puntos más relevantes de lo ya realizado.
 
-```bash
-ng generate component component-name
-```
+### Componentes y rutas principales 🔧
 
-For a complete list of available schematics (such as `components`, `directives`,
-or `pipes`), run:
+- `src/app/routes/inicio` — Componente `Inicio`: interfaz principal para el
+  análisis de sentimientos (modo **individual** y **masivo**), tablas,
+  paginación, gráfico circular y mensajes de notificación.
+- `src/app/shared/ui` — Componentes reutilizables: `header`, `footer`,
+  `grafico-pie`, `campo-seleccion`.
 
-```bash
-ng generate --help
-```
+### Servicios y lógica central 🧠
 
-## Building
+- `src/app/core/services/sentiment-api-service.ts` — `SentimentApiService`:
+  realiza llamadas POST a la ruta `/sentiment` del backend (por defecto
+  `http://localhost:5000`).
+- `src/app/core/services/theme-service.ts` — `ThemeService`: gestiona el modo
+  claro/oscuro y lo persiste en `localStorage`.
+- `src/app/core/interfaces/sentiment-api.ts` — Tipos TypeScript para las
+  solicitudes y respuestas del API.
 
-To build the project run:
+### Funcionalidades implementadas ✅
 
-```bash
-ng build
-```
+- Análisis **individual** de texto con validaciones y visualización del
+  resultado en tabla.
+- Análisis **masivo** (prototipo): carga de CSV y resumen estadístico
+  (actualmente usa un ejemplo mock al procesar archivos; es un punto a completar
+  para integrar con el backend si se desea).
+- Visualización de la distribución de sentimientos mediante un gráfico de pastel
+  y tablas con paginación.
+- Modo claro/oscuro persistente por usuario.
+- Notificaciones de estado con `MatSnackBar`.
 
-This will compile your project and store the build artifacts in the `dist/`
-directory. By default, the production build optimizes your application for
-performance and speed.
+### Integración y requisitos ⚠️
 
-## Running unit tests
+- El frontend asume que la API de sentimiento está disponible en
+  `http://localhost:5000` y expone el endpoint `POST /sentiment`.
+- Para pruebas locales, asegúrate de iniciar también el backend.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test
-runner, use the following command:
+### Comandos útiles 🧩
 
-```bash
-ng test
-```
+- Instalar dependencias: `pnpm install` o `npm install`.
+- Ejecutar servidor: `ng serve`.
+- Compilar para producción: `ng build`.
+- Ejecutar tests unitarios: `ng test`.
 
-## Running end-to-end tests
+### Archivos y rutas de interés 📁
 
-For end-to-end (e2e) testing, run:
+- `src/app/routes/inicio` — UI y lógica principal de análisis.
+- `src/app/core/services/sentiment-api-service.ts` — Cliente HTTP.
+- `src/app/core/services/theme-service.ts` — Gestión de tema.
+- `src/app/shared/ui` — Componentes reutilizables (header, footer, gráfico,
+  etc.).
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You
-can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command
-references, visit the
-[Angular CLI Overview and Command Reference](https://angular.dev/tools/cli)
-page.
+> Nota: El análisis masivo está parcialmente implementado.
