@@ -2,6 +2,7 @@ import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   OnInit,
   signal,
 } from '@angular/core';
@@ -19,7 +20,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 
-import { Resultado } from '../../core/interfaces/modelo';
+import { ResponseSentiment } from '../../core/interfaces/sentiment-api';
 import {
   CampoSeleccion,
   Valores,
@@ -27,6 +28,7 @@ import {
 import { Footer } from '../../shared/ui/footer/footer';
 import { GraficoPie } from '../../shared/ui/grafico-pie/grafico-pie';
 import { Header } from '../../shared/ui/header/header';
+import { SentimentApiService } from './../../core/services/sentiment-api-service';
 
 @Component({
   selector: 'app-inicio',
@@ -52,6 +54,7 @@ import { Header } from '../../shared/ui/header/header';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Inicio implements OnInit {
+  private _sentimentApiService = inject(SentimentApiService);
   textareaFormControl = new FormControl('', [Validators.required]);
   displayedColumnsTableIndividual: string[] = [
     'comentario',
@@ -64,7 +67,7 @@ export class Inicio implements OnInit {
     'probabilidad',
     'acciones',
   ];
-  dataSource: Resultado[] = [];
+  dataSource = signal<ResponseSentiment[]>([]);
   formas: Valores[] = [
     { value: 'individual', viewValue: 'Individual' },
     { value: 'masiva', viewValue: 'Masiva' },
@@ -98,22 +101,17 @@ export class Inicio implements OnInit {
   analizarComentarios() {
     if (this.formaAnalisis === 'individual') {
       if (this.textareaFormControl.valid) {
-        const comentario = this.textareaFormControl.value;
-        console.log('Analizando comentario individual:', comentario);
-        this.dataSource = [
-          {
-            id: 1,
-            comentario:
-              'Me encantó la experiencia, fue realmente satisfactoria',
-            sentimiento: 'positivo',
-            probabilidad: 0.95,
+        const comentario = this.textareaFormControl.value!;
+        this._sentimentApiService.analizar({ comentario }).subscribe({
+          next: (response) => {
+            this.dataSource.set([response]);
           },
-        ];
+        });
       }
     } else if (this.formaAnalisis === 'masiva') {
       if (this.archivoCargado()) {
         console.log('Analizando archivo CSV:', this.archivoCargado()?.name);
-        this.dataSource = [
+        this.dataSource.set([
           {
             id: 1,
             comentario:
@@ -121,14 +119,14 @@ export class Inicio implements OnInit {
             sentimiento: 'positivo',
             probabilidad: 0.95,
           },
-        ];
+        ]);
         this._resumenEstadistico();
       }
     }
   }
   eliminarRegistro(idResultado: number) {
-    this.dataSource = this.dataSource.filter(
-      (resultado) => resultado.id !== idResultado,
+    this.dataSource.set(
+      this.dataSource().filter((resultado) => resultado.id !== idResultado),
     );
   }
   descartarAnalisis() {
@@ -138,7 +136,7 @@ export class Inicio implements OnInit {
   //   this._reiniciarFormulario();
   // }
   private _reiniciarFormulario() {
-    this.dataSource = [];
+    this.dataSource.set([]);
     this.textareaFormControl.reset();
     this.eliminarArchivoCargado();
     sessionStorage.removeItem('forma-analisis');
@@ -147,7 +145,7 @@ export class Inicio implements OnInit {
     let positivo = 0;
     // let neutro = 0;
     let negativo = 0;
-    this.dataSource.forEach((registro) => {
+    this.dataSource().forEach((registro) => {
       if (registro.sentimiento === 'positivo') positivo += 1;
       if (registro.sentimiento === 'negativo') negativo += 1;
     });
