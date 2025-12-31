@@ -1,10 +1,11 @@
-export interface Sentiment {
-  comentario: string;
+export interface SentimentRequest {
+  text: string;
 }
 
-export interface ResponseSentiment {
+export interface SentimentResponse {
   id: number;
-  comentario: string;
-  sentimiento: 'positivo' | 'negativo';
+  text: string;
+  prevision: 'Positivo' | 'Negativo' | 'Neutro';
   probabilidad: number;
+  createdAt: string;
 }

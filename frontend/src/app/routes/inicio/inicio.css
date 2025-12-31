@@ -91,7 +91,7 @@ main {
   flex-direction: column;
   gap: 3rem;
   max-width: 600px;
-  min-width: 300px;
+  min-width: 400px;
 }
 
 .opciones,
@@ -112,6 +112,9 @@ main {
 
 .campo-textarea {
   width: 100%;
+}
+textarea {
+  min-height: 80px;
 }
 
 .resultados {

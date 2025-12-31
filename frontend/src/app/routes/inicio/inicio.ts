@@ -1,4 +1,5 @@
-import { NgClass } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,6 +7,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
   FormsModule,
@@ -17,10 +19,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { merge } from 'rxjs';
 
-import { ResponseSentiment } from '../../core/interfaces/sentiment-api';
+import { SentimentResponse } from '../../core/interfaces/sentiment-api';
 import {
   CampoSeleccion,
   Valores,
@@ -47,6 +51,7 @@ import { SentimentApiService } from './../../core/services/sentiment-api-service
     ReactiveFormsModule,
     NgClass,
     GraficoPie,
+    DecimalPipe,
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
@@ -54,8 +59,13 @@ import { SentimentApiService } from './../../core/services/sentiment-api-service
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Inicio implements OnInit {
+  private _snackBar = inject(MatSnackBar);
   private _sentimentApiService = inject(SentimentApiService);
-  textareaFormControl = new FormControl('', [Validators.required]);
+  textarea = new FormControl('', [
+    Validators.required,
+    // Validators.minLength(10),
+  ]);
+  errorMessage = signal('');
   displayedColumnsTableIndividual: string[] = [
     'comentario',
     'sentimiento',
@@ -67,7 +77,7 @@ export class Inicio implements OnInit {
     'probabilidad',
     'acciones',
   ];
-  dataSource = signal<ResponseSentiment[]>([]);
+  dataSource = signal<SentimentResponse[]>([]);
   formas: Valores[] = [
     { value: 'individual', viewValue: 'Individual' },
     { value: 'masiva', viewValue: 'Masiva' },
@@ -77,10 +87,22 @@ export class Inicio implements OnInit {
   sentimientoPredominante = signal<string>('');
   datosGraficoPie = signal<{ value: number; name: string }[]>([]);
 
+  constructor() {
+    merge(this.textarea.statusChanges, this.textarea.valueChanges)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.actualizarMensajeErrorTextarea());
+  }
   ngOnInit() {
     const campoGuardado = sessionStorage.getItem('forma-analisis');
     if (campoGuardado) {
       this.formaAnalisis = campoGuardado;
+    }
+  }
+  actualizarMensajeErrorTextarea() {
+    if (this.textarea.hasError('required')) {
+      this.errorMessage.set('Comentario obligatorio');
+    } else {
+      this.errorMessage.set('Mínimo 10 caracteres');
     }
   }
   cambiarFormaAnlisis(nuevoValor: string) {
@@ -100,11 +122,32 @@ export class Inicio implements OnInit {
   }
   analizarComentarios() {
     if (this.formaAnalisis === 'individual') {
-      if (this.textareaFormControl.valid) {
-        const comentario = this.textareaFormControl.value!;
-        this._sentimentApiService.analizar({ comentario }).subscribe({
+      if (this.textarea.valid) {
+        const text = this.textarea.value!;
+        this._sentimentApiService.analizar({ text }).subscribe({
           next: (response) => {
             this.dataSource.set([response]);
+            this._snackBar.open(
+              'Tu comentario fue analizado correctamente.',
+              'Cerrar',
+              {
+                duration: 10000,
+              },
+            );
+          },
+          error: (e: HttpErrorResponse) => {
+            let mensaje = 'Ocurrió un error.';
+            if (
+              e.status === 0 ||
+              e.status === HttpStatusCode.InternalServerError
+            ) {
+              mensaje = 'Error inesperado, vuelva a intentarlo más tarde.';
+            } else if (e.status === HttpStatusCode.BadRequest) {
+              mensaje = 'Parece que has cometido errores.';
+            }
+            this._snackBar.open(mensaje, 'Cerrar', {
+              duration: 10000,
+            });
           },
         });
       }
@@ -114,10 +157,10 @@ export class Inicio implements OnInit {
         this.dataSource.set([
           {
             id: 1,
-            comentario:
-              'Me encantó la experiencia, fue realmente satisfactoria',
-            sentimiento: 'positivo',
+            text: 'Me encantó la experiencia, fue realmente satisfactoria',
+            prevision: 'Positivo',
             probabilidad: 0.95,
+            createdAt: '2025-12-30T23:22:42.9809864',
           },
         ]);
         this._resumenEstadistico();
@@ -137,30 +180,38 @@ export class Inicio implements OnInit {
   // }
   private _reiniciarFormulario() {
     this.dataSource.set([]);
-    this.textareaFormControl.reset();
+    this.textarea.reset();
     this.eliminarArchivoCargado();
     sessionStorage.removeItem('forma-analisis');
   }
   private _resumenEstadistico() {
     let positivo = 0;
-    // let neutro = 0;
+    let neutro = 0;
     let negativo = 0;
+
     this.dataSource().forEach((registro) => {
-      if (registro.sentimiento === 'positivo') positivo += 1;
-      if (registro.sentimiento === 'negativo') negativo += 1;
+      if (registro.prevision === 'Positivo') {
+        positivo++;
+      } else if (registro.prevision === 'Neutro') {
+        neutro++;
+      } else if (registro.prevision === 'Negativo') {
+        negativo++;
+      }
     });
-    this.sentimientoPredominante.set(
-      positivo > negativo ? 'positivo' : 'negativo',
-    );
+
+    let predominante = 'Neutro';
+    if (positivo > neutro && positivo > negativo) {
+      predominante = 'Positivo';
+    } else if (negativo > positivo && negativo > neutro) {
+      predominante = 'Negativo';
+    }
+
+    this.sentimientoPredominante.set(predominante);
+
     this.datosGraficoPie.set([
-      {
-        value: positivo,
-        name: 'positivo',
-      },
-      {
-        value: negativo,
-        name: 'negativo',
-      },
+      { value: positivo, name: 'Positivo' },
+      { value: negativo, name: 'Negativo' },
+      { value: neutro, name: 'Neutro' },
     ]);
   }
 }

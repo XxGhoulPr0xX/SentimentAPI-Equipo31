@@ -64,12 +64,14 @@
                   class="campo-textarea">
                   <textarea
                     matInput
-                    [formControl]="textareaFormControl"
-                    placeholder="Por ejemplo. Me pareció interesante...">
+                    [formControl]="textarea"
+                    placeholder="Por ejemplo. Me pareció interesante..."
+                    (blur)="actualizarMensajeErrorTextarea()"
+                    required>
                   </textarea>
-                  @if (textareaFormControl.hasError('required')) {
+                  @if (textarea.invalid) {
                     <mat-error>
-                      Comentario <strong>obligatorio</strong>
+                      {{ errorMessage() }}
                     </mat-error>
                   }
                 </mat-form-field>
@@ -77,7 +79,7 @@
                   type="submit"
                   matButton="filled"
                   class="boton"
-                  [disabled]="textareaFormControl.invalid">
+                  [disabled]="textarea.invalid">
                   ANALIZAR COMENTARIO
                 </button>
               }
@@ -106,10 +108,10 @@
                   <div
                     [ngClass]="{
                       'etiqueta-positivo':
-                        sentimientoPredominante() === 'positivo',
-                      'etiqueta-neutro': sentimientoPredominante() === 'neutro',
+                        sentimientoPredominante() === 'Positivo',
+                      'etiqueta-neutro': sentimientoPredominante() === 'Neutro',
                       'etiqueta-negativo':
-                        sentimientoPredominante() === 'negativo',
+                        sentimientoPredominante() === 'Negativo',
                     }"
                     class="etiqueta">
                     {{ sentimientoPredominante() }}
@@ -124,7 +126,7 @@
                 <ng-container matColumnDef="comentario">
                   <th mat-header-cell *matHeaderCellDef>Comentario</th>
                   <td mat-cell *matCellDef="let element">
-                    <p>{{ element.comentario }}</p>
+                    <p>{{ element.text }}</p>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="sentimiento">
@@ -133,12 +135,12 @@
                     <div></div>
                     <div
                       [ngClass]="{
-                        'etiqueta-positivo': element.sentimiento === 'positivo',
-                        'etiqueta-neutro': element.sentimiento === 'neutro',
-                        'etiqueta-negativo': element.sentimiento === 'negativo',
+                        'etiqueta-positivo': element.prevision === 'Positivo',
+                        'etiqueta-neutro': element.prevision === 'Neutro',
+                        'etiqueta-negativo': element.prevision === 'Negativo',
                       }"
                       class="etiqueta">
-                      {{ element.sentimiento }}
+                      {{ element.prevision }}
                     </div>
                   </td>
                 </ng-container>
@@ -186,7 +188,7 @@
                 <ng-container matColumnDef="comentario">
                   <th mat-header-cell *matHeaderCellDef>Comentario</th>
                   <td mat-cell *matCellDef="let element">
-                    <p>{{ element.comentario }}</p>
+                    <p>{{ element.text }}</p>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="sentimiento">
@@ -195,19 +197,19 @@
                     <div></div>
                     <div
                       [ngClass]="{
-                        'etiqueta-positivo': element.sentimiento === 'positivo',
-                        'etiqueta-neutro': element.sentimiento === 'neutro',
-                        'etiqueta-negativo': element.sentimiento === 'negativo',
+                        'etiqueta-positivo': element.prevision === 'Positivo',
+                        'etiqueta-neutro': element.prevision === 'Neutro',
+                        'etiqueta-negativo': element.prevision === 'Negativo',
                       }"
                       class="etiqueta">
-                      {{ element.sentimiento }}
+                      {{ element.prevision }}
                     </div>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="probabilidad">
                   <th mat-header-cell *matHeaderCellDef>Probabilidad</th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.probabilidad }}
+                    {{ element.probabilidad | number: '1.1-2' }}
                   </td>
                 </ng-container>
                 <tr
