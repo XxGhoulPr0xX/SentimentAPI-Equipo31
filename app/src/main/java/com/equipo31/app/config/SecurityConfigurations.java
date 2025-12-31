@@ -1,4 +1,4 @@
-package com.equipo31.app.security;
+package com.equipo31.app.config;
 
 import java.util.Arrays;
 
