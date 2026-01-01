@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error('Error en el servidor')
 
             const result = await response.json()
-            console.log("Resultado de IA:", result)
+            //Modelo de ia clasificacion verla
+            //console.log("Resultado de IA:", result)
 
             // Mostrar resultado en el badge (usando las propiedades correctas del JSON)
             const sentimiento = result.prevision || result.etiqueta || "Neutro"
