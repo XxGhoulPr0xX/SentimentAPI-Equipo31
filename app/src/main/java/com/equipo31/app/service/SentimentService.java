@@ -6,11 +6,13 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -22,71 +24,73 @@ public class SentimentService {
 
     private static final Logger log = LoggerFactory.getLogger(SentimentService.class);
 
-    @Value("${onnx.model.path:models/modelo_sentimientoENG.onnx}")
-    private String modelPath;
+    //@Value("${onnx.model.path:models/modelo_sentimientoESP.onnx}")
+    @Value("${onnx.model.path.es:models/modelo_sentimientoESP.onnx}")
+    private String modelPathEs;
+    @Value("${onnx.model.path.en:models/modelo_sentimientoENG.onnx}")
+    private String modelPathEn;
 
     private OrtEnvironment env;
     private OrtSession session;
-    private String inputName;
+    //private String inputName;
+
+    //Mapas hash que son para guardar las sesiones actuales de los modelos de ia
+    private Map<String, OrtSession> sesiones = new HashMap<>();
+    private Map<String, String> inputNames = new HashMap<>();
+
+    private String idiomaActual = "es";
 
     // Las etiquetas que devuelve el modelo (es binario: 0=Negativo, 1=Positivo)
     private static final String[] ETIQUETAS = { "Negativo", "Positivo" };
 
+    //Inicia la busqueda del modelo de ia y se carga en memoria
     @PostConstruct
     public void inicializar() {
         try {
-            log.info("Inicializando servicio de análisis de sentimiento...");
-
-            // Crear entorno ONNX
             env = OrtEnvironment.getEnvironment();
-
-            // Buscar el modelo en diferentes ubicaciones
-            Path rutaModelo = encontrarModelo();
-
-            if (rutaModelo == null) {
-                throw new RuntimeException("No se encontró el modelo ONNX en ninguna ubicación");
-            }
-
-            log.info("Cargando modelo desde: {}", rutaModelo.toAbsolutePath());
-
-            // Crear sesión con el modelo
-            OrtSession.SessionOptions opciones = new OrtSession.SessionOptions();
-            session = env.createSession(rutaModelo.toString(), opciones);
-
-            // Obtener nombre de la entrada del modelo
-            Map<String, NodeInfo> inputs = session.getInputInfo();
-            inputName = inputs.keySet().iterator().next();
-
-            log.info("Modelo cargado exitosamente. Entrada: {}", inputName);
-            log.info("Salidas del modelo: {}", session.getOutputInfo().keySet());
-
+            // Cargar modelo ESPAÑOL
+            cargarModelo("es", modelPathEs);
+            // Cargar modelo INGLES
+            cargarModelo("en", modelPathEn);
+            log.info("Modelos cargados. Idioma inicial: {}", idiomaActual);
         } catch (Exception e) {
-            log.error("Error al cargar el modelo ONNX: {}", e.getMessage());
-            throw new RuntimeException("Error al inicializar el modelo de sentimiento", e);
+            log.error("Error inicializando modelos: {}", e.getMessage());
         }
     }
 
     /**
-     * Busca el archivo del modelo en varias ubicaciones posibles.
+     * Al tener una ruta dentro de un disco, no servia si se llevaba a un servidor, entonces
+     * se aplico la tecnica de classpath, que esta genera un archivo temporal dentro de recursos que accede el mismo framework
      */
-    private Path encontrarModelo() {
-        // Lista de rutas donde buscar el modelo
-        String[] ubicaciones = {
-                modelPath,
-                "app/" + modelPath,
-                "../" + modelPath,
-                "src/main/resources/static/models/modelo_sentimientoENG.onnx",
-                "target/classes/static/models/modelo_sentimientoENG.onnx"
-        };
+    private void cargarModelo(String claveIdioma, String rutaArchivo) throws Exception {
+        try {
+            ClassPathResource resource = new ClassPathResource("static/" + rutaArchivo);
+            if (resource.exists()) {
+                // ONNX Runtime necesita un archivo físico en el disco o un array de bytes.
+                // Lo más seguro es crear un archivo temporal para que la librería pueda leerlo.
+                Path tempFile = Files.createTempFile("modelo_" + claveIdioma, ".onnx");
+                try (InputStream is = resource.getInputStream()) {
+                    Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                }
 
-        for (String ubicacion : ubicaciones) {
-            Path ruta = Paths.get(ubicacion);
-            if (Files.exists(ruta)) {
-                return ruta;
+                // 2. Crear la sesión usando la ruta del archivo temporal
+                OrtSession session = env.createSession(tempFile.toString(), new OrtSession.SessionOptions());
+                sesiones.put(claveIdioma, session);
+                
+                String inputName = session.getInputInfo().keySet().iterator().next();
+                inputNames.put(claveIdioma, inputName);
+                
+                log.info("Modelo cargado [{}] exitosamente desde el Classpath", claveIdioma);
+                
+                // Opcional: borrar el archivo temporal al salir
+                tempFile.toFile().deleteOnExit();
+            } else {
+                log.error("No se encontró el recurso en el classpath para: static/{}", rutaArchivo);
             }
+        } catch (Exception e) {
+            log.error("Error cargando el modelo [{}]: {}", claveIdioma, e.getMessage());
+            throw e;
         }
-
-        return null;
     }
 
     @PreDestroy
@@ -101,40 +105,41 @@ public class SentimentService {
         }
     }
 
+    // --- NUEVO MÉTODO PARA CAMBIAR EL IDIOMA DESDE EL CONTROLADOR ---
+    public void setIdioma(String nuevoIdioma) {
+        if (sesiones.containsKey(nuevoIdioma)) {
+            this.idiomaActual = nuevoIdioma;
+            log.info("Idioma cambiado a: {}", nuevoIdioma);
+        } else {
+            throw new IllegalArgumentException("Idioma no soportado o modelo no cargado: " + nuevoIdioma);
+        }
+    }
+    
+    public String getIdiomaActual() {
+        return this.idiomaActual;
+    }
+
     /**
      * Método principal que recibe el texto y devuelve la predicción.
      * Tuve que usar un array 2D porque el modelo lo requiere así.
      */
     public Map<String, Object> analizarSentimiento(String texto) {
+        OrtSession session = sesiones.get(idiomaActual);
+        String inputName = inputNames.get(idiomaActual);
+        if (session == null) {
+            throw new RuntimeException("El modelo no está cargado");
+        }
         try {
-            if (session == null) {
-                throw new RuntimeException("El modelo no está cargado");
-            }
-
-            log.debug("Analizando texto: {}", texto);
-
-            // Importante: el modelo espera un array 2D, no 1D. Me costó darme cuenta de
-            // esto.
             String[][] inputData = new String[][] { { texto } };
             OnnxTensor inputTensor = OnnxTensor.createTensor(env, inputData);
-
-            // Ejecutar inferencia
             Map<String, OnnxTensor> inputs = Collections.singletonMap(inputName, inputTensor);
             OrtSession.Result resultado = session.run(inputs);
-
-            // Procesar salida
-            Map<String, Object> respuesta = procesarResultado(resultado);
-
-            // Cerrar recursos
+            Map<String, Object> respuesta = procesarResultado(resultado); // Tu método existente
             inputTensor.close();
             resultado.close();
-
-            log.info("Resultado del análisis: {}", respuesta);
             return respuesta;
-
         } catch (Exception e) {
             log.error("Error al analizar sentimiento: {}", e.getMessage());
-            // Si algo falla, devuelvo un resultado neutro para no romper la app
             Map<String, Object> errorResult = new HashMap<>();
             errorResult.put("etiqueta", "Neutro");
             errorResult.put("probabilidad", 0.5);

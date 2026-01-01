@@ -17,7 +17,13 @@
     </nav>
     <div class="container">
         <h1 class="title">Análisis de Sentimiento con IA</h1>
-
+        <div class="language-selector">
+            <label for="langSelect">Idioma del Modelo:</label>
+            <select id="langSelect" class="lang-dropdown">
+                <option value="es" selected>Español</option>
+                <option value="en">Inglés</option>
+            </select>
+        </div>
         <form class="comment-form">
             <div class="quote-icon quote-left">"</div>
             <div class="user-icon">
@@ -31,7 +37,7 @@
                 rows="4" required></textarea>
             <div class="quote-icon quote-right">"</div>
             <!-- Puse type="button" porque en Brave se enviaba el form como GET 
-                 y el texto aparecía en la URL. Con esto lo manejo todo desde JS -->
+            y el texto aparecía en la URL. Con esto lo manejo todo desde JS -->
             <button type="button" class="submit-button" id="submitButton">Analizar Sentimiento</button>
         </form>
 
