@@ -63,7 +63,7 @@ export class Inicio implements OnInit {
   private _sentimentApiService = inject(SentimentApiService);
   textarea = new FormControl('', [
     Validators.required,
-    // Validators.minLength(10),
+    Validators.minLength(10),
   ]);
   errorMessage = signal('');
   displayedColumnsTableIndividual: string[] = [

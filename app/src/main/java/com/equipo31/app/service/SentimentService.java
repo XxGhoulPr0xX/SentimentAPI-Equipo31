@@ -1,4 +1,4 @@
-package com.equipo31.app.Service;
+package com.equipo31.app.service;
 
 import ai.onnxruntime.*;
 import jakarta.annotation.PostConstruct;
@@ -24,7 +24,7 @@ public class SentimentService {
 
     private static final Logger log = LoggerFactory.getLogger(SentimentService.class);
 
-    //@Value("${onnx.model.path:models/modelo_sentimientoESP.onnx}")
+    // @Value("${onnx.model.path:models/modelo_sentimientoESP.onnx}")
     @Value("${onnx.model.path.es:models/modelo_sentimientoESP.onnx}")
     private String modelPathEs;
     @Value("${onnx.model.path.en:models/modelo_sentimientoENG.onnx}")
@@ -32,9 +32,9 @@ public class SentimentService {
 
     private OrtEnvironment env;
     private OrtSession session;
-    //private String inputName;
+    // private String inputName;
 
-    //Mapas hash que son para guardar las sesiones actuales de los modelos de ia
+    // Mapas hash que son para guardar las sesiones actuales de los modelos de ia
     private Map<String, OrtSession> sesiones = new HashMap<>();
     private Map<String, String> inputNames = new HashMap<>();
 
@@ -43,7 +43,7 @@ public class SentimentService {
     // Las etiquetas que devuelve el modelo (es binario: 0=Negativo, 1=Positivo)
     private static final String[] ETIQUETAS = { "Negativo", "Positivo" };
 
-    //Inicia la busqueda del modelo de ia y se carga en memoria
+    // Inicia la busqueda del modelo de ia y se carga en memoria
     @PostConstruct
     public void inicializar() {
         try {
@@ -59,8 +59,10 @@ public class SentimentService {
     }
 
     /**
-     * Al tener una ruta dentro de un disco, no servia si se llevaba a un servidor, entonces
-     * se aplico la tecnica de classpath, que esta genera un archivo temporal dentro de recursos que accede el mismo framework
+     * Al tener una ruta dentro de un disco, no servia si se llevaba a un servidor,
+     * entonces
+     * se aplico la tecnica de classpath, que esta genera un archivo temporal dentro
+     * de recursos que accede el mismo framework
      */
     private void cargarModelo(String claveIdioma, String rutaArchivo) throws Exception {
         try {
@@ -76,12 +78,12 @@ public class SentimentService {
                 // 2. Crear la sesión usando la ruta del archivo temporal
                 OrtSession session = env.createSession(tempFile.toString(), new OrtSession.SessionOptions());
                 sesiones.put(claveIdioma, session);
-                
+
                 String inputName = session.getInputInfo().keySet().iterator().next();
                 inputNames.put(claveIdioma, inputName);
-                
+
                 log.info("Modelo cargado [{}] exitosamente desde el Classpath", claveIdioma);
-                
+
                 // Opcional: borrar el archivo temporal al salir
                 tempFile.toFile().deleteOnExit();
             } else {
@@ -114,7 +116,7 @@ public class SentimentService {
             throw new IllegalArgumentException("Idioma no soportado o modelo no cargado: " + nuevoIdioma);
         }
     }
-    
+
     public String getIdiomaActual() {
         return this.idiomaActual;
     }
