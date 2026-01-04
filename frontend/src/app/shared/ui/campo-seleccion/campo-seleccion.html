@@ -1,0 +1,9 @@
+<mat-form-field [appearance]="appearance" subscriptSizing="dynamic">
+  <mat-select
+    [(value)]="seleccion"
+    (selectionChange)="onCambiosSeleccion($event.value)">
+    @for (valor of valores; track valor) {
+      <mat-option [value]="valor.value">{{ valor.viewValue }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>

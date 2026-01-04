@@ -1,0 +1,89 @@
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use './theme-colors' as my-theme;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  display: flex;
+  height: 100dvh;
+}
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: my-theme.$primary-palette,
+      ),
+      typography: (
+        plain-family: Poppins,
+        brand-family: Poppins,
+        bold-weight: 700,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+}
+
+body {
+  flex: 1 1 auto;
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-regular);
+
+  // Reset the user agent margin.
+  margin: 0;
+
+  font-family: Poppins, 'Helvetica Neue', sans-serif;
+}
+
+body.tema-oscuro {
+  color-scheme: dark;
+  .etiqueta-positivo {
+    background-color: #35862f;
+  }
+  .etiqueta-neutro {
+    background-color: #d5aa00;
+  }
+  .etiqueta-negativo {
+    background-color: #d52b33;
+  }
+}
+
+.mdc-text-field--filled {
+  background-color: var(--mat-sys-inverse-primary) !important;
+}
+
+.mat-mdc-tab {
+  font-size: medium !important;
+}
+
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  color: var(--mat-sys-primary) !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper,
+.mat-mdc-form-field-bottom-align::before {
+  font-size: small !important;
+}
+
+.mat-mdc-paginator {
+  background-color: var(--mat-sys-surface-container) !important;
+}
