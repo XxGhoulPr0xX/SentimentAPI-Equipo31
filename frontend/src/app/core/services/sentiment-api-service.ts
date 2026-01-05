@@ -13,10 +13,29 @@ export class SentimentApiService {
   private _httpCliente = inject(HttpClient);
   private _url = 'http://localhost:5000';
 
-  analizar(body: SentimentRequest) {
+  analizarComentario(body: SentimentRequest) {
     return this._httpCliente.post<SentimentResponse>(
-      `${this._url}/sentiment`,
+      `${this._url}/sentiment-api/analizar-comentario`,
       body,
+    );
+  }
+
+  analizarArchivo(formData: FormData) {
+    return this._httpCliente.post<SentimentResponse[]>(
+      `${this._url}/sentiment-api/analizar-archivo`,
+      formData,
+    );
+  }
+
+  configurarIdioma(param: string) {
+    return this._httpCliente.post(
+      `${this._url}/api/config/idioma`,
+      {},
+      {
+        params: {
+          lang: param,
+        },
+      },
     );
   }
 }

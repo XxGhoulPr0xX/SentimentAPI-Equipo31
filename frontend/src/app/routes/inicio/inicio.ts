@@ -1,4 +1,3 @@
-import { DecimalPipe, NgClass } from '@angular/common';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -7,7 +6,6 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
   FormsModule,
@@ -18,11 +16,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { merge } from 'rxjs';
 
 import { SentimentResponse } from '../../core/interfaces/sentiment-api';
 import {
@@ -30,8 +26,8 @@ import {
   Valores,
 } from '../../shared/ui/campo-seleccion/campo-seleccion';
 import { Footer } from '../../shared/ui/footer/footer';
-import { GraficoPie } from '../../shared/ui/grafico-pie/grafico-pie';
 import { Header } from '../../shared/ui/header/header';
+import { ResultadosAnalisis } from '../../shared/ui/resultados-analisis/resultados-analisis';
 import { SentimentApiService } from './../../core/services/sentiment-api-service';
 
 @Component({
@@ -45,13 +41,10 @@ import { SentimentApiService } from './../../core/services/sentiment-api-service
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
-    MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
     ReactiveFormsModule,
-    NgClass,
-    GraficoPie,
-    DecimalPipe,
+    ResultadosAnalisis,
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
@@ -65,50 +58,37 @@ export class Inicio implements OnInit {
     Validators.required,
     Validators.minLength(10),
   ]);
-  errorMessage = signal('');
-  displayedColumnsTableIndividual: string[] = [
-    'comentario',
-    'sentimiento',
-    'probabilidad',
-  ];
-  displayedColumnsTableMasiva: string[] = [
-    'comentario',
-    'sentimiento',
-    'probabilidad',
-    'acciones',
-  ];
-  dataSource = signal<SentimentResponse[]>([]);
+  input = new FormControl('', [Validators.required, Validators.minLength(2)]);
   formas: Valores[] = [
     { value: 'individual', viewValue: 'Individual' },
     { value: 'masiva', viewValue: 'Masiva' },
   ];
+  idiomas: Valores[] = [
+    { value: 'es', viewValue: 'Español' },
+    { value: 'en', viewValue: 'English' },
+  ];
+  idiomaAnalisis = 'es';
   formaAnalisis = 'individual';
   archivoCargado = signal<File | null>(null);
-  sentimientoPredominante = signal<string>('');
-  datosGraficoPie = signal<{ value: number; name: string }[]>([]);
-
-  constructor() {
-    merge(this.textarea.statusChanges, this.textarea.valueChanges)
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.actualizarMensajeErrorTextarea());
-  }
+  resultadosAnalisis = signal<SentimentResponse[]>([]);
   ngOnInit() {
     const campoGuardado = sessionStorage.getItem('forma-analisis');
     if (campoGuardado) {
       this.formaAnalisis = campoGuardado;
     }
   }
-  actualizarMensajeErrorTextarea() {
-    if (this.textarea.hasError('required')) {
-      this.errorMessage.set('Comentario obligatorio');
-    } else {
-      this.errorMessage.set('Mínimo 10 caracteres');
-    }
-  }
   cambiarFormaAnlisis(nuevoValor: string) {
     this.formaAnalisis = nuevoValor;
     sessionStorage.setItem('forma-analisis', nuevoValor);
-    this._reiniciarFormulario();
+    this._reiniciar();
+  }
+  cambiarIdiomaAnlisis(nuevoValor: string) {
+    this.idiomaAnalisis = nuevoValor;
+    this._sentimentApiService.configurarIdioma(this.idiomaAnalisis).subscribe({
+      next: (body) => {
+        console.log(body);
+      },
+    });
   }
   cambiarArchivoGuardado(archivos: FileList | null) {
     if (archivos && archivos.length > 0) {
@@ -119,14 +99,16 @@ export class Inicio implements OnInit {
   }
   eliminarArchivoCargado() {
     this.archivoCargado.set(null);
+    const inputFile = document.getElementById('file') as HTMLInputElement;
+    if (inputFile) inputFile.value = '';
   }
   analizarComentarios() {
     if (this.formaAnalisis === 'individual') {
       if (this.textarea.valid) {
-        const text = this.textarea.value!;
-        this._sentimentApiService.analizar({ text }).subscribe({
+        const text = this.textarea.value as string;
+        this._sentimentApiService.analizarComentario({ text }).subscribe({
           next: (response) => {
-            this.dataSource.set([response]);
+            this.resultadosAnalisis.set([response]);
             this._snackBar.open(
               'Tu comentario fue analizado correctamente.',
               'Cerrar',
@@ -152,66 +134,56 @@ export class Inicio implements OnInit {
         });
       }
     } else if (this.formaAnalisis === 'masiva') {
-      if (this.archivoCargado()) {
-        console.log('Analizando archivo CSV:', this.archivoCargado()?.name);
-        this.dataSource.set([
-          {
-            id: 1,
-            text: 'Me encantó la experiencia, fue realmente satisfactoria',
-            prevision: 'Positivo',
-            probabilidad: 0.95,
-            createdAt: '2025-12-30T23:22:42.9809864',
+      if (this.archivoCargado() && this.input.valid) {
+        const archivo = this.archivoCargado() as File;
+        const columnName = this.input.value as string;
+        const formData = new FormData();
+        formData.append('file', archivo);
+        formData.append('columnName', columnName);
+        this._sentimentApiService.analizarArchivo(formData).subscribe({
+          next: (response) => {
+            this.resultadosAnalisis.set(response);
+            this._snackBar.open(
+              'Tu archivo fue analizado correctamente.',
+              'Cerrar',
+              {
+                duration: 10000,
+              },
+            );
           },
-        ]);
-        this._resumenEstadistico();
+          error: (e: HttpErrorResponse) => {
+            let mensaje = 'Ocurrió un error.';
+            if (
+              e.status === 0 ||
+              e.status === HttpStatusCode.InternalServerError
+            ) {
+              mensaje = 'Error inesperado, vuelva a intentarlo más tarde.';
+            } else if (e.status === HttpStatusCode.BadRequest) {
+              mensaje = 'Parece que has cometido errores.';
+            }
+            this._snackBar.open(mensaje, 'Cerrar', {
+              duration: 10000,
+            });
+          },
+        });
       }
     }
   }
-  eliminarRegistro(idResultado: number) {
-    this.dataSource.set(
-      this.dataSource().filter((resultado) => resultado.id !== idResultado),
+  eliminarRegistro(id: number) {
+    this.resultadosAnalisis.update((items) =>
+      items.filter((item) => item.id !== id),
     );
   }
   descartarAnalisis() {
-    this._reiniciarFormulario();
+    this._reiniciar();
   }
   // guardarAnalisis() {
   //   this._reiniciarFormulario();
   // }
-  private _reiniciarFormulario() {
-    this.dataSource.set([]);
+  private _reiniciar() {
+    this.resultadosAnalisis.set([]);
     this.textarea.reset();
+    this.input.reset();
     this.eliminarArchivoCargado();
-    sessionStorage.removeItem('forma-analisis');
-  }
-  private _resumenEstadistico() {
-    let positivo = 0;
-    let neutro = 0;
-    let negativo = 0;
-
-    this.dataSource().forEach((registro) => {
-      if (registro.prevision === 'Positivo') {
-        positivo++;
-      } else if (registro.prevision === 'Neutro') {
-        neutro++;
-      } else if (registro.prevision === 'Negativo') {
-        negativo++;
-      }
-    });
-
-    let predominante = 'Neutro';
-    if (positivo > neutro && positivo > negativo) {
-      predominante = 'Positivo';
-    } else if (negativo > positivo && negativo > neutro) {
-      predominante = 'Negativo';
-    }
-
-    this.sentimientoPredominante.set(predominante);
-
-    this.datosGraficoPie.set([
-      { value: positivo, name: 'Positivo' },
-      { value: negativo, name: 'Negativo' },
-      { value: neutro, name: 'Neutro' },
-    ]);
   }
 }

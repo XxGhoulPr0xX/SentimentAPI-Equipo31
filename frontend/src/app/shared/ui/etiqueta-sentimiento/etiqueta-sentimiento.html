@@ -1,0 +1,9 @@
+<div
+  [ngClass]="{
+    'etiqueta-positivo': sentimiento() === 'Positivo',
+    'etiqueta-neutro': sentimiento() === 'Neutro',
+    'etiqueta-negativo': sentimiento() === 'Negativo',
+  }"
+  class="etiqueta">
+  {{ sentimiento() }}
+</div>

@@ -1,5 +1,7 @@
 package com.equipo31.app.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +23,14 @@ public class ApiConfig {
     private SentimentService sentimentService;
 
     @PostMapping("/idioma")
-    public ResponseEntity<String> cambiarIdioma(@RequestParam String lang) {
+    public ResponseEntity<Map<String, String>> cambiarIdioma(@RequestParam String lang) {
         try {
             sentimentService.setIdioma(lang.toLowerCase());
-            return ResponseEntity.ok("Idioma cambiado a: " + lang);
+            return ResponseEntity.ok(
+                    Map.of("message", "Idioma cambiado a " + lang));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", e.getMessage()));
         }
     }
 }

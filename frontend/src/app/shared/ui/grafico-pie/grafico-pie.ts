@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Input,
+  input,
 } from '@angular/core';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TooltipComponent } from 'echarts/components';
@@ -22,7 +23,7 @@ import { LabelLayout } from 'echarts/features';
 
 import { ThemeService } from '../../../core/services/theme-service';
 
-export interface Dato {
+export interface DataGraphicPie {
   value: number;
   name: string;
 }
@@ -36,71 +37,56 @@ export interface Dato {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraficoPie {
-  @Input({ required: true }) set datos(datos: Dato[]) {
-    this._actualizarGraficoPie(datos);
-  }
   private _themeService = inject(ThemeService);
-  tema = this._themeService.modoOscuro;
-  chartOption: EChartsCoreOption = {};
-  temaOscuro = {
+  isDarkMode = this._themeService.modoOscuro;
+  datosGraficoSignal = input.required<DataGraphicPie[]>();
+  readonly chartOptionsStatic: EChartsCoreOption = {
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        padAngle: 3,
+        itemStyle: { borderRadius: 4 },
+        label: { show: false, position: 'center' },
+        emphasis: {
+          label: { show: true, fontSize: 20, fontWeight: 'bold' },
+        },
+      },
+    ],
+  };
+  chartDynamicOptions = computed(() => {
+    const darkMode = this.isDarkMode();
+    const datos = this.datosGraficoSignal();
+    const configTema = darkMode ? this._temaOscuro : this._temaClaro;
+    return {
+      ...configTema,
+      series: [
+        {
+          name: 'Distribución de sentimientos',
+          data: datos,
+        },
+      ],
+    } as EChartsCoreOption;
+  });
+  private readonly _temaOscuro = {
     darkMode: true,
     color: ['#35862f', '#d52b33', '#d5aa00'],
     tooltip: {
       backgroundColor: '#1f201d',
-      textStyle: {
-        color: '#e4e2dd',
-      },
+      textStyle: { color: '#e4e2dd' },
+      trigger: 'item',
+      formatter: '{a} <br/>{b} : {c} ({d}%)',
     },
   };
-  temaClaro = {
+  private readonly _temaClaro = {
     darkMode: false,
     color: ['#34c759', '#ff383c', '#ffcc00'],
     tooltip: {
       backgroundColor: '#e4e2dd',
-      textStyle: {
-        color: '#1f201d',
-      },
+      textStyle: { color: '#1f201d' },
+      trigger: 'item',
+      formatter: '{a} <br/>{b} : {c} ({d}%)',
     },
   };
-
-  private _actualizarGraficoPie(datos: Dato[]) {
-    this.chartOption = {
-      tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b} : {c} ({d}%)',
-      },
-      // legend: {
-      //   top: '5%',
-      //   left: 'center',
-      // },
-      series: [
-        {
-          name: 'Distribución de sentimientos',
-          type: 'pie',
-          radius: ['40%', '70%'],
-
-          avoidLabelOverlap: false,
-          padAngle: 3,
-          itemStyle: {
-            borderRadius: 4,
-          },
-          label: {
-            show: false,
-            position: 'center',
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 20,
-              fontWeight: 'bold',
-            },
-          },
-          labelLine: {
-            show: false,
-          },
-          data: datos,
-        },
-      ],
-    };
-  }
 }

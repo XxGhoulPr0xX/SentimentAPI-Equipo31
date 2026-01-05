@@ -1,0 +1,22 @@
+:host {
+  display: contents;
+}
+
+.etiqueta {
+  border-radius: 1rem;
+  padding: 0.25rem 1rem;
+  width: fit-content;
+  display: inline-block;
+  background-color: #d3d3d3;
+}
+
+.etiqueta-positivo {
+  background-color: #34c759;
+}
+
+.etiqueta-neutro {
+  background-color: #ffcc00;
+}
+.etiqueta-negativo {
+  background-color: #ff383c;
+}

@@ -1,3 +1,5 @@
+export type Sentimiento = 'Positivo' | 'Negativo' | 'Neutro' | '';
+
 export interface SentimentRequest {
   text: string;
 }
@@ -5,7 +7,7 @@ export interface SentimentRequest {
 export interface SentimentResponse {
   id: number;
   text: string;
-  prevision: 'Positivo' | 'Negativo' | 'Neutro';
+  prevision: Sentimiento;
   probabilidad: number;
   createdAt: string;
 }
