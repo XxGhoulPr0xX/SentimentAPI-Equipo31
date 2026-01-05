@@ -1,10 +1,10 @@
-package com.equipo31.app.controller;
+package com.equipo31.app.Controller;
 
 import com.equipo31.app.dto.SentimentRequest;
 import com.equipo31.app.dto.SentimentResponse;
 import com.equipo31.app.entity.SentimentRecord;
 import com.equipo31.app.repository.SentimentRecordRepository;
-import com.equipo31.app.service.SentimentService;
+import com.equipo31.app.Service.SentimentService;
 import com.opencsv.CSVReader;
 
 import jakarta.validation.Valid;
