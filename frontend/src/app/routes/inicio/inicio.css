@@ -4,6 +4,29 @@
   flex-direction: column;
 }
 
+.card {
+  flex: 1 1 auto;
+  background-color: var(--mat-sys-surface-container);
+  border-radius: 4px;
+  box-shadow:
+    0px 1px 1px 0px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-title {
+  padding-bottom: 0.5rem;
+}
+
+.card span,
+.seccion-analisis p span {
+  font-weight: bold;
+}
+
 .campos-seleccion {
   display: flex;
   gap: 1.5rem;
@@ -44,20 +67,26 @@
 
 main {
   flex-grow: 1;
-  padding: 3rem;
+  padding: 3rem 3rem 0;
 }
 
-.seccion {
+.seccion-analisis,
+.seccion-historial {
   overflow: hidden;
-  padding: 3rem 3rem 0;
+  padding: 3rem;
   display: flex;
-  gap: 6rem;
   p {
-    margin: 0;
-    span {
-      font-weight: bold;
-    }
+    margin: 0.5rem 0;
   }
+}
+
+.seccion-historial {
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.seccion-analisis {
+  gap: 6rem;
 }
 
 .configuracion,
@@ -109,7 +138,6 @@ textarea {
 
 .boton,
 .boton-campo-archivo {
-  /* font-weight: bold; */
   border-radius: 4px;
 }
 
@@ -127,14 +155,16 @@ form {
 }
 
 @media (min-width: 960px) and (max-width: 1280px) {
-  .seccion {
+  .seccion-analisis,
+  .seccion-historial {
     flex-wrap: wrap;
     gap: 3rem;
   }
 }
 
 @media (min-width: 600px) and (max-width: 960px) {
-  .seccion {
+  .seccion-analisis,
+  .seccion-historial {
     padding: 1.5rem 1.5rem 0;
     flex-wrap: wrap;
     gap: 3rem;
@@ -142,11 +172,12 @@ form {
 }
 
 @media (max-width: 600px) {
-  .seccion {
+  .seccion-analisis,
+  .seccion-historial {
     flex-direction: column;
     padding: 1.5rem 0 0;
   }
-  .seccion,
+  .seccion-analisis,
   .configuracion {
     gap: 1.5rem;
   }

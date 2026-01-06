@@ -38,4 +38,10 @@ export class SentimentApiService {
       },
     );
   }
+
+  obtenerDatosAlmacenados() {
+    return this._httpCliente.get<SentimentResponse[]>(
+      `${this._url}/stats/list`,
+    );
+  }
 }

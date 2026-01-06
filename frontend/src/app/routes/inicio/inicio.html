@@ -1,87 +1,124 @@
 <app-header></app-header>
 <main>
-  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" class="secciones">
+  <mat-tab-group
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    class="secciones">
     <mat-tab label="ANALIZAR">
-      <div class="seccion">
+      <div class="seccion-analisis">
         <div class="configuracion">
           <form (ngSubmit)="analizarComentarios()">
             <div class="opciones">
               <p><span>Primero</span>, selecciona cómo deseas analizar.</p>
               <div class="campos-seleccion">
-                <app-campo-seleccion appearance="outline" [seleccion]="formaAnalisis" [valores]="formas"
+                <app-campo-seleccion
+                  appearance="outline"
+                  [seleccion]="formaAnalisis"
+                  [valores]="formas"
                   (cambiosSeleccion)="cambiarFormaAnlisis($event)" />
-                <app-campo-seleccion appearance="outline" [seleccion]="idiomaAnalisis" [valores]="idiomas"
+                <app-campo-seleccion
+                  appearance="outline"
+                  [seleccion]="idiomaAnalisis"
+                  [valores]="idiomas"
                   (cambiosSeleccion)="cambiarIdiomaAnlisis($event)" />
               </div>
             </div>
             <div class="datos">
               @if (formaAnalisis === 'masiva') {
-              <p><span>Segundo</span>, sube el archivo de tipo CSV.</p>
-              <div class="datos-campos">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <mat-label>Columna a analizar</mat-label>
-                  <input matInput [formControl]="input" placeholder="Por ejemplo. review" />
-                  @if (input.invalid && input.touched) {
-                  <mat-error>
-                    @if (this.input.hasError('required')) {
-                    Columna obligatoria
+                <p><span>Segundo</span>, sube el archivo de tipo CSV.</p>
+                <div class="datos-campos">
+                  <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic">
+                    <mat-label>Columna a analizar</mat-label>
+                    <input
+                      matInput
+                      [formControl]="input"
+                      placeholder="Por ejemplo. review" />
+                    @if (input.invalid && input.touched) {
+                      <mat-error>
+                        @if (this.input.hasError('required')) {
+                          Columna obligatoria
+                        }
+                        @if (this.input.hasError('minlength')) {
+                          Mínimo 2 caracteres
+                        }
+                        @if (this.input.hasError('soloEspacios')) {
+                          El nombre no puede contener solo espacios
+                        }
+                      </mat-error>
                     }
-                    @if (this.input.hasError('minlength')) {
-                    Mínimo 2 caracteres
-                    }
-                    @if (this.input.hasError('soloEspacios')) {
-                    El nombre no puede contener solo espacios
-                    }
-                  </mat-error>
-                  }
-                </mat-form-field>
-                <div class="campo-archivo">
-                  <button type="button" class="boton-campo-archivo" matButton="outlined">
-                    Subir archivo
-                    <label for="file"></label>
-                    <input id="file" type="file" accept=".csv" (change)="
+                  </mat-form-field>
+                  <div class="campo-archivo">
+                    <button
+                      type="button"
+                      class="boton-campo-archivo"
+                      matButton="outlined">
+                      Subir archivo
+                      <label for="file"></label>
+                      <input
+                        id="file"
+                        type="file"
+                        accept=".csv"
+                        (change)="
                           cambiarArchivoGuardado($event.target.files)
                         " />
-                  </button>
-                  <span class="nombre-archivo">
-                    @if (archivoCargado()) {
-                    <button type="button" matIconButton aria-label="Eliminar archivo cargado"
-                      (click)="eliminarArchivoCargado()">
-                      <mat-icon>close</mat-icon>
                     </button>
-                    {{ archivoCargado()?.name }}
-                    } @else {
-                    Ningún archivo seleccionado
-                    }
-                  </span>
+                    <span class="nombre-archivo">
+                      @if (archivoCargado()) {
+                        <button
+                          type="button"
+                          matIconButton
+                          aria-label="Eliminar archivo cargado"
+                          (click)="eliminarArchivoCargado()">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                        {{ archivoCargado()?.name }}
+                      } @else {
+                        Ningún archivo seleccionado
+                      }
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <button type="submit" matButton="filled" class="boton"
-                [disabled]="archivoCargado() === null || input.invalid">
-                ANALIZAR COMENTARIOS
-              </button>
+                <button
+                  type="submit"
+                  matButton="filled"
+                  class="boton"
+                  [disabled]="archivoCargado() === null || input.invalid">
+                  ANALIZAR COMENTARIOS
+                </button>
               } @else {
-              <p><span>Segundo</span>, ingresa el comentario.</p>
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="campo-textarea">
-                <textarea matInput [formControl]="textarea" placeholder="Por ejemplo. Me pareció interesante...">
+                <p><span>Segundo</span>, ingresa el comentario.</p>
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="campo-textarea">
+                  <textarea
+                    matInput
+                    [formControl]="textarea"
+                    placeholder="Por ejemplo. Me pareció interesante...">
                   </textarea>
-                @if (textarea.invalid && textarea.touched) {
-                <mat-error>
-                  @if (this.textarea.hasError('required')) {
-                  Comentario obligatorio
+                  @if (textarea.invalid && textarea.touched) {
+                    <mat-error>
+                      @if (this.textarea.hasError('required')) {
+                        Comentario obligatorio
+                      }
+                      @if (this.textarea.hasError('minlength')) {
+                        Mínimo 10 caracteres
+                      }
+                      @if (this.textarea.hasError('soloEspacios')) {
+                        El comentario no puede contener solo espacios
+                      }
+                    </mat-error>
                   }
-                  @if (this.textarea.hasError('minlength')) {
-                  Mínimo 10 caracteres
-                  }
-                  @if (this.textarea.hasError('soloEspacios')) {
-                  El comentario no puede contener solo espacios
-                  }
-                </mat-error>
-                }
-              </mat-form-field>
-              <button type="submit" matButton="filled" class="boton" [disabled]="textarea.invalid">
-                ANALIZAR COMENTARIO
-              </button>
+                </mat-form-field>
+                <button
+                  type="submit"
+                  matButton="filled"
+                  class="boton"
+                  [disabled]="textarea.invalid">
+                  ANALIZAR COMENTARIO
+                </button>
               }
             </div>
           </form>
@@ -90,20 +127,45 @@
           <p>
             <span>Tercero</span> examina el resultado del análisis realizado.
           </p>
-          <app-resultados-analisis [formaAnalisis]="formaAnalisis" [allItems]="resultadosAnalisis()"
-            [mensajeError]="mensajeError()" (registroEliminado)="eliminarRegistro($event)" />
+          <app-resultados-analisis
+            [formaAnalisis]="formaAnalisis"
+            [allItems]="resultadosAnalisis()"
+            [mensajeError]="mensajeError()"
+            (registroEliminado)="eliminarRegistro($event)" />
           <div class="botones">
-            <!-- <button
-              matButton="filled"
-              class="boton"
-              (click)="guardarAnalisis()">
-              GUARDAR ANÁLISIS
-            </button> -->
-            <button matButton class="boton" (click)="descartarAnalisis()">
-              DESCARTAR ANÁLISIS
+            <button matButton class="boton" (click)="nuevoAnalisis()">
+              NUEVO ANÁLISIS
             </button>
           </div>
         </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="HISTORIAL">
+      <div class="seccion-historial">
+        @if (datosAlmacenados().length === 0) {
+          No hay datos almacenados.
+        } @else {
+          @for (datoAlmacenado of datosAlmacenados(); track datoAlmacenado.id) {
+            <mat-card appearance="filled" class="card">
+              <mat-card-header>
+                <mat-card-title class="card-title">
+                  {{
+                    datoAlmacenado.createdAt
+                      | date: 'MM/dd/yy, hh:mm a' : '' : 'es-PE'
+                  }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p><span>Comentario: </span>{{ datoAlmacenado.text }}</p>
+                <p><span>Sentimiento: </span>{{ datoAlmacenado.prevision }}</p>
+                <p>
+                  <span>Probabilidad: </span
+                  >{{ datoAlmacenado.probabilidad | number: '1.1-4' }}
+                </p>
+              </mat-card-content>
+            </mat-card>
+          }
+        }
       </div>
     </mat-tab>
   </mat-tab-group>

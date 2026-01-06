@@ -1,3 +1,4 @@
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -15,6 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -47,6 +49,9 @@ import { SentimentApiService } from './../../core/services/sentiment-api-service
     MatIconModule,
     ReactiveFormsModule,
     ResultadosAnalisis,
+    MatCardModule,
+    DatePipe,
+    DecimalPipe,
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
@@ -78,12 +83,21 @@ export class Inicio implements OnInit {
   formaAnalisis = 'individual';
   archivoCargado = signal<File | null>(null);
   resultadosAnalisis = signal<SentimentResponse[]>([]);
+  datosAlmacenados = signal<SentimentResponse[]>([]);
   mensajeError = signal<string | null>(null);
   ngOnInit() {
     const campoGuardado = sessionStorage.getItem('forma-analisis');
     if (campoGuardado) {
       this.formaAnalisis = campoGuardado;
     }
+    this.cargarDatosAlmacenados();
+  }
+  cargarDatosAlmacenados() {
+    this._sentimentApiService.obtenerDatosAlmacenados().subscribe({
+      next: (response) => {
+        this.datosAlmacenados.set(response.reverse());
+      },
+    });
   }
   cambiarFormaAnlisis(nuevoValor: string) {
     this.formaAnalisis = nuevoValor;
@@ -128,6 +142,7 @@ export class Inicio implements OnInit {
                 duration: 10000,
               },
             );
+            this.cargarDatosAlmacenados();
           },
           error: (e: HttpErrorResponse) => {
             let mensaje = 'Ocurrió un error inesperado.';
@@ -136,18 +151,24 @@ export class Inicio implements OnInit {
               mensaje = e.error.error;
             } else if (e.status === 0) {
               mensaje = 'No se pudo conectar con el servidor.';
-              descripcion = 'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
+              descripcion =
+                'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
             } else if (e.status === HttpStatusCode.InternalServerError) {
               mensaje = 'Error interno del servidor.';
-              descripcion = 'El servicio de análisis tuvo un problema procesando tu solicitud. Intenta nuevamente.';
+              descripcion =
+                'El servicio de análisis tuvo un problema procesando tu solicitud. Intenta nuevamente.';
             } else if (e.status === HttpStatusCode.BadRequest) {
               mensaje = 'Solicitud inválida.';
-              descripcion = 'El comentario enviado no cumple con el formato esperado.';
+              descripcion =
+                'El comentario enviado no cumple con el formato esperado.';
             } else if (e.status === HttpStatusCode.ServiceUnavailable) {
               mensaje = 'Servicio no disponible.';
-              descripcion = 'El servicio de análisis está temporalmente fuera de línea.';
+              descripcion =
+                'El servicio de análisis está temporalmente fuera de línea.';
             }
-            const mensajeCompleto = descripcion ? `${mensaje} ${descripcion}` : mensaje;
+            const mensajeCompleto = descripcion
+              ? `${mensaje} ${descripcion}`
+              : mensaje;
             this.mensajeError.set(mensajeCompleto);
           },
         });
@@ -169,6 +190,7 @@ export class Inicio implements OnInit {
                 duration: 10000,
               },
             );
+            this.cargarDatosAlmacenados();
           },
           error: (e: HttpErrorResponse) => {
             let mensaje = 'Ocurrió un error inesperado.';
@@ -177,18 +199,24 @@ export class Inicio implements OnInit {
               mensaje = e.error.error;
             } else if (e.status === 0) {
               mensaje = 'No se pudo conectar con el servidor.';
-              descripcion = 'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
+              descripcion =
+                'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
             } else if (e.status === HttpStatusCode.InternalServerError) {
               mensaje = 'Error interno del servidor.';
-              descripcion = 'Hubo un problema procesando tu archivo. Verifica que el formato CSV sea correcto.';
+              descripcion =
+                'Hubo un problema procesando tu archivo. Verifica que el formato CSV sea correcto.';
             } else if (e.status === HttpStatusCode.BadRequest) {
               mensaje = 'Archivo o columna inválidos.';
-              descripcion = 'Verifica que el archivo sea CSV y que la columna especificada exista.';
+              descripcion =
+                'Verifica que el archivo sea CSV y que la columna especificada exista.';
             } else if (e.status === HttpStatusCode.ServiceUnavailable) {
               mensaje = 'Servicio no disponible.';
-              descripcion = 'El servicio de análisis está temporalmente fuera de línea.';
+              descripcion =
+                'El servicio de análisis está temporalmente fuera de línea.';
             }
-            const mensajeCompleto = descripcion ? `${mensaje} ${descripcion}` : mensaje;
+            const mensajeCompleto = descripcion
+              ? `${mensaje} ${descripcion}`
+              : mensaje;
             this.mensajeError.set(mensajeCompleto);
           },
         });
@@ -200,12 +228,9 @@ export class Inicio implements OnInit {
       items.filter((item) => item.id !== id),
     );
   }
-  descartarAnalisis() {
+  nuevoAnalisis() {
     this._reiniciar();
   }
-  // guardarAnalisis() {
-  //   this._reiniciarFormulario();
-  // }
   private _reiniciar() {
     this.resultadosAnalisis.set([]);
     this.textarea.reset();
