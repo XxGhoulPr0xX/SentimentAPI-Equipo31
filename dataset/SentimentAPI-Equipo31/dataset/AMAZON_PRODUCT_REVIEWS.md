@@ -1,4 +1,4 @@
-#📊 Sentiment API AMAZON PRODUCT REVIEWS – Proyecto Grupo 31
+# 📊 Sentiment API AMAZON PRODUCT REVIEWS – Proyecto Grupo 31
 
 Este proyecto implementa un **modelo de análisis de sentimientos** aplicado a reseñas de productos de Amazon.  
 El objetivo es construir un **MVP (Minimum Viable Product)** que permita clasificar comentarios en **Positivos (1)** y **Negativos (0)**, 
@@ -6,7 +6,7 @@ integrando técnicas de **Data Science** y preparación para una futura API.
 
 ---
 
-##🚀 Objetivo del Proyecto
+## 🚀 Objetivo del Proyecto
 - Automatizar la clasificación de reseñas de clientes.
 - Detectar tempranamente comentarios negativos para mejorar la atención al cliente.
 - Proporcionar una base sólida para integrar el modelo en una API de análisis de sentimientos.
