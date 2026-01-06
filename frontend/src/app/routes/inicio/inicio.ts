@@ -7,9 +7,11 @@ import {
   signal,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormControl,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,8 +59,13 @@ export class Inicio implements OnInit {
   textarea = new FormControl('', [
     Validators.required,
     Validators.minLength(10),
+    this.noSoloEspaciosValidator,
   ]);
-  input = new FormControl('', [Validators.required, Validators.minLength(2)]);
+  input = new FormControl('', [
+    Validators.required,
+    Validators.minLength(2),
+    this.noSoloEspaciosValidator,
+  ]);
   formas: Valores[] = [
     { value: 'individual', viewValue: 'Individual' },
     { value: 'masiva', viewValue: 'Masiva' },
@@ -71,6 +78,7 @@ export class Inicio implements OnInit {
   formaAnalisis = 'individual';
   archivoCargado = signal<File | null>(null);
   resultadosAnalisis = signal<SentimentResponse[]>([]);
+  mensajeError = signal<string | null>(null);
   ngOnInit() {
     const campoGuardado = sessionStorage.getItem('forma-analisis');
     if (campoGuardado) {
@@ -103,6 +111,10 @@ export class Inicio implements OnInit {
     if (inputFile) inputFile.value = '';
   }
   analizarComentarios() {
+    // Limpiar error y resultados previos al iniciar nuevo análisis
+    this.mensajeError.set(null);
+    this.resultadosAnalisis.set([]);
+
     if (this.formaAnalisis === 'individual') {
       if (this.textarea.valid) {
         const text = this.textarea.value as string;
@@ -118,18 +130,25 @@ export class Inicio implements OnInit {
             );
           },
           error: (e: HttpErrorResponse) => {
-            let mensaje = 'Ocurrió un error.';
-            if (
-              e.status === 0 ||
-              e.status === HttpStatusCode.InternalServerError
-            ) {
-              mensaje = 'Error inesperado, vuelva a intentarlo más tarde.';
+            let mensaje = 'Ocurrió un error inesperado.';
+            let descripcion = '';
+            if (e.error && e.error.error) {
+              mensaje = e.error.error;
+            } else if (e.status === 0) {
+              mensaje = 'No se pudo conectar con el servidor.';
+              descripcion = 'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
+            } else if (e.status === HttpStatusCode.InternalServerError) {
+              mensaje = 'Error interno del servidor.';
+              descripcion = 'El servicio de análisis tuvo un problema procesando tu solicitud. Intenta nuevamente.';
             } else if (e.status === HttpStatusCode.BadRequest) {
-              mensaje = 'Parece que has cometido errores.';
+              mensaje = 'Solicitud inválida.';
+              descripcion = 'El comentario enviado no cumple con el formato esperado.';
+            } else if (e.status === HttpStatusCode.ServiceUnavailable) {
+              mensaje = 'Servicio no disponible.';
+              descripcion = 'El servicio de análisis está temporalmente fuera de línea.';
             }
-            this._snackBar.open(mensaje, 'Cerrar', {
-              duration: 10000,
-            });
+            const mensajeCompleto = descripcion ? `${mensaje} ${descripcion}` : mensaje;
+            this.mensajeError.set(mensajeCompleto);
           },
         });
       }
@@ -152,18 +171,25 @@ export class Inicio implements OnInit {
             );
           },
           error: (e: HttpErrorResponse) => {
-            let mensaje = 'Ocurrió un error.';
-            if (
-              e.status === 0 ||
-              e.status === HttpStatusCode.InternalServerError
-            ) {
-              mensaje = 'Error inesperado, vuelva a intentarlo más tarde.';
+            let mensaje = 'Ocurrió un error inesperado.';
+            let descripcion = '';
+            if (e.error && e.error.error) {
+              mensaje = e.error.error;
+            } else if (e.status === 0) {
+              mensaje = 'No se pudo conectar con el servidor.';
+              descripcion = 'Verifica que el servicio de análisis esté en ejecución o revisa tu conexión a internet.';
+            } else if (e.status === HttpStatusCode.InternalServerError) {
+              mensaje = 'Error interno del servidor.';
+              descripcion = 'Hubo un problema procesando tu archivo. Verifica que el formato CSV sea correcto.';
             } else if (e.status === HttpStatusCode.BadRequest) {
-              mensaje = 'Parece que has cometido errores.';
+              mensaje = 'Archivo o columna inválidos.';
+              descripcion = 'Verifica que el archivo sea CSV y que la columna especificada exista.';
+            } else if (e.status === HttpStatusCode.ServiceUnavailable) {
+              mensaje = 'Servicio no disponible.';
+              descripcion = 'El servicio de análisis está temporalmente fuera de línea.';
             }
-            this._snackBar.open(mensaje, 'Cerrar', {
-              duration: 10000,
-            });
+            const mensajeCompleto = descripcion ? `${mensaje} ${descripcion}` : mensaje;
+            this.mensajeError.set(mensajeCompleto);
           },
         });
       }
@@ -185,5 +211,13 @@ export class Inicio implements OnInit {
     this.textarea.reset();
     this.input.reset();
     this.eliminarArchivoCargado();
+  }
+
+  // Validador personalizado para rechazar textos que solo contengan espacios
+  noSoloEspaciosValidator(control: AbstractControl): ValidationErrors | null {
+    if (control.value && control.value.trim().length === 0) {
+      return { soloEspacios: true };
+    }
+    return null;
   }
 }

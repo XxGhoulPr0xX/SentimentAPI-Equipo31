@@ -14,6 +14,7 @@
 
 .resumen-estadistico {
   display: flex;
+
   .resumen-columna:not(:nth-child(2)) div,
   .resumen-columna:nth-child(2) div:first-child {
     display: flex;
@@ -27,13 +28,15 @@
   flex-direction: column;
   flex: 1 1 auto;
   text-align: center;
-  > div:first-child {
+
+  >div:first-child {
     border-bottom: 1px solid var(--mat-sys-outline);
     font-weight: bold;
     height: 56px;
     padding: 0 1rem;
   }
-  > div:last-child {
+
+  >div:last-child {
     flex: 1 1 auto;
     min-height: 56px;
   }
@@ -46,9 +49,11 @@ table {
 
 tr {
   font-size: medium;
+
   &:last-child td {
     border-bottom-right-radius: 4px;
   }
+
   td:first-child {
     display: grid;
   }
@@ -56,9 +61,11 @@ tr {
 
 th {
   font-weight: bold;
+
   &:last-child {
     border-top-right-radius: 4px;
   }
+
   &:not(:first-child) {
     text-align: end;
   }
@@ -93,4 +100,32 @@ td:last-child {
   .resumen-estadistico {
     flex-direction: column;
   }
+}
+
+/* Error container styles */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 8px;
+  text-align: center;
+  gap: 1rem;
+}
+
+.error-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #f44336;
+}
+
+.error-message {
+  color: #c62828;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 500;
 }

@@ -10,10 +10,16 @@ header {
   padding: 2rem 3rem;
   flex-wrap: wrap;
   gap: 3rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Optional: adds a subtle shadow to separate from content */
 }
 
 h1 {
   margin: 0;
+
   span:first-child {
     font-weight: normal;
   }

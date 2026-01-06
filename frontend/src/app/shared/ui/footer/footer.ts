@@ -44,7 +44,7 @@ export class Footer {
     },
     {
       fullName: 'Augusto Paz',
-      linkedin: '',
+      linkedin: 'https://github.com/AugustoPaz13',
     },
     {
       fullName: 'Christian Enrique Polo Melendez',

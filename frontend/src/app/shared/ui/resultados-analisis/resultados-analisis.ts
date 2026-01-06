@@ -44,6 +44,7 @@ export class ResultadosAnalisis {
   sentimientoPredominante = signal<Sentimiento>('');
   datosGraficoPie = signal<DataGraphicPie[]>([]);
   allItems = input.required<SentimentResponse[]>();
+  mensajeError = input<string | null>(null);
   pageIndex = signal(0);
   pageSize = signal(10);
   currentPageItems = computed(() => {

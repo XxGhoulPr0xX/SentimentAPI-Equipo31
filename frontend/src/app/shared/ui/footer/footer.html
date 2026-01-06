@@ -2,9 +2,13 @@
   <span>GRUPO 31</span>
   <ul>
     @for (integrante of integrantes; track $index) {
-      <li>
-        <a [href]="integrante.linkedin">{{ integrante.fullName }}</a>
-      </li>
+    <li>
+      @if (integrante.linkedin) {
+      <a [href]="integrante.linkedin" target="_blank" rel="noopener noreferrer">{{ integrante.fullName }}</a>
+      } @else {
+      <span class="no-link">{{ integrante.fullName }}</span>
+      }
+    </li>
     }
   </ul>
 </footer>

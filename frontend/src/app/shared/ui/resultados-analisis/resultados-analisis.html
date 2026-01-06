@@ -1,27 +1,34 @@
+@if (mensajeError()) {
+<div class="error-container">
+  <mat-icon class="error-icon">error_outline</mat-icon>
+  <p class="error-message">{{ mensajeError() }}</p>
+</div>
+} @else {
+
 @if (formaAnalisis() === 'masiva') {
-  <div class="resumen-estadistico">
-    <div class="resumen-columna">
-      <div><span>Total de comentarios</span></div>
+<div class="resumen-estadistico">
+  <div class="resumen-columna">
+    <div><span>Total de comentarios</span></div>
 
-      <div>{{ allItems().length }}</div>
-    </div>
+    <div>{{ allItems().length }}</div>
+  </div>
 
-    <div class="resumen-columna">
-      <div><span>Distribución de sentimientos</span></div>
+  <div class="resumen-columna">
+    <div><span>Distribución de sentimientos</span></div>
 
-      <div>
-        <app-grafico-pie [datosGraficoSignal]="datosGraficoPie()" />
-      </div>
-    </div>
-
-    <div class="resumen-columna">
-      <div><span>Sentimiento predominante</span></div>
-
-      <div>
-        <app-etiqueta-sentimiento [sentimiento]="sentimientoPredominante()" />
-      </div>
+    <div>
+      <app-grafico-pie [datosGraficoSignal]="datosGraficoPie()" />
     </div>
   </div>
+
+  <div class="resumen-columna">
+    <div><span>Sentimiento predominante</span></div>
+
+    <div>
+      <app-etiqueta-sentimiento [sentimiento]="sentimientoPredominante()" />
+    </div>
+  </div>
+</div>
 }
 
 <div class="tabla-resultados">
@@ -53,41 +60,30 @@
     </ng-container>
 
     @if (formaAnalisis() === 'masiva') {
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef aria-label="row actions">
-          &nbsp;
-        </th>
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+        &nbsp;
+      </th>
 
-        <td mat-cell *matCellDef="let element">
-          <button
-            type="button"
-            matIconButton
-            aria-label="Eliminar registro"
-            (click)="eliminarRegistro(element.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+      <td mat-cell *matCellDef="let element">
+        <button type="button" matIconButton aria-label="Eliminar registro" (click)="eliminarRegistro(element.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
     }
 
     <tr mat-header-row *matHeaderRowDef="displayedColumnsTable()"></tr>
 
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumnsTable()"
-      class="comentario"
-      [class.comentario-full]="isExpanded(row)"
-      (click)="toggle(row)"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsTable()" class="comentario"
+      [class.comentario-full]="isExpanded(row)" (click)="toggle(row)"></tr>
   </table>
 
   @if (formaAnalisis() === 'masiva') {
-    <mat-paginator
-      [length]="allItems().length"
-      [pageSize]="pageSize()"
-      [pageIndex]="pageIndex()"
-      [pageSizeOptions]="[5, 10, 15, 20, 25]"
-      (page)="onPageChange($event)"
-      showFirstLastButtons>
-    </mat-paginator>
+  <mat-paginator [length]="allItems().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[5, 10, 15, 20, 25]" (page)="onPageChange($event)" showFirstLastButtons>
+  </mat-paginator>
   }
 </div>
+
+}

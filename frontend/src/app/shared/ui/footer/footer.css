@@ -30,11 +30,21 @@ li {
   display: contents;
 }
 
-a {
+a,
+.no-link {
   width: 300px;
   text-decoration: none;
   color: var(--mat-sys-on-surface);
-  &:hover {
-    text-decoration: underline;
-  }
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  /* Needed for transform */
+}
+
+a:hover {
+  text-decoration: none;
+  /* Removed underline to prefer other effects */
+  color: var(--mat-sys-primary);
+  transform: scale(1.05);
+  cursor: pointer;
+  font-weight: bold;
 }
