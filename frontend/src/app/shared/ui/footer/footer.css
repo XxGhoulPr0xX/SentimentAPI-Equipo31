@@ -9,10 +9,9 @@ footer {
   align-items: center;
   background-color: var(--mat-sys-inverse-primary);
   padding: 3rem;
-}
-
-span {
-  font-weight: bold;
+  > span {
+    font-weight: bold;
+  }
 }
 
 ul {
@@ -31,20 +30,18 @@ li {
 }
 
 a,
-.no-link {
+li > span {
   width: 300px;
   text-decoration: none;
-  color: var(--mat-sys-on-surface);
+  color: var(--mat-sys-primary);
   transition: all 0.2s ease-in-out;
   display: inline-block;
-  /* Needed for transform */
 }
 
-a:hover {
+a:hover,
+li > span:hover {
   text-decoration: none;
-  /* Removed underline to prefer other effects */
-  color: var(--mat-sys-primary);
-  transform: scale(1.05);
+  color: var(--mat-sys-on-surface);
+  transform: scale(1.025);
   cursor: pointer;
-  font-weight: bold;
 }

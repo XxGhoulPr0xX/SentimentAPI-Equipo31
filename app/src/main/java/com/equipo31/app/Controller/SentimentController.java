@@ -1,12 +1,12 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import com.equipo31.app.dto.SentimentRequest;
 import com.equipo31.app.dto.SentimentResponse;
 import com.equipo31.app.entity.SentimentRecord;
 
 import com.equipo31.app.repository.SentimentRecordRepository;
-import com.equipo31.app.Service.AnalizarArchivoService;
-import com.equipo31.app.Service.SentimentService;
+import com.equipo31.app.service.AnalizarArchivoService;
+import com.equipo31.app.service.SentimentService;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

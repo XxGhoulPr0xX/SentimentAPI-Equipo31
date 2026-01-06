@@ -29,14 +29,14 @@
   flex: 1 1 auto;
   text-align: center;
 
-  >div:first-child {
+  > div:first-child {
     border-bottom: 1px solid var(--mat-sys-outline);
     font-weight: bold;
     height: 56px;
     padding: 0 1rem;
   }
 
-  >div:last-child {
+  > div:last-child {
     flex: 1 1 auto;
     min-height: 56px;
   }
@@ -88,6 +88,11 @@ td:not(:first-child) {
 th:last-child,
 td:last-child {
   background-color: var(--mat-sys-surface-container);
+}
+
+.paginator {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 @media (min-width: 600px) and (max-width: 960px) {

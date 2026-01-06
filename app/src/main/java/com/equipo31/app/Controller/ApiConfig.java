@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.equipo31.app.Service.SentimentService;
+import com.equipo31.app.service.SentimentService;
 
 /**
  * Ruta que se encarga de cargar la logica de cambio de idioma del servicio de

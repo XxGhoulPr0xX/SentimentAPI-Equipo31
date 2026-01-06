@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

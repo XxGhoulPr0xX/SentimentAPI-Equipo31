@@ -1,4 +1,4 @@
-package com.equipo31.app.Service;
+package com.equipo31.app.service;
 
 import com.opencsv.CSVReader;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,8 @@ public class AnalizarArchivoService {
             try (CSVReader csvReader = new CSVReader(reader)) {
                 String[] cabecera = csvReader.readNext();
 
-                if (cabecera == null) throw new RuntimeException("El archivo está vacío.");
+                if (cabecera == null)
+                    throw new RuntimeException("El archivo está vacío.");
 
                 int columnIndex = -1;
                 for (int i = 0; i < cabecera.length; i++) {

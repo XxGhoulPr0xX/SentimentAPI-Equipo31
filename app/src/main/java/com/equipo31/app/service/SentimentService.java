@@ -1,4 +1,4 @@
-package com.equipo31.app.Service;
+package com.equipo31.app.service;
 
 import ai.onnxruntime.*;
 import jakarta.annotation.PostConstruct;

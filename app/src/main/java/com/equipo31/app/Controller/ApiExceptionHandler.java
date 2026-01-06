@@ -1,4 +1,4 @@
-package com.equipo31.app.Controller;
+package com.equipo31.app.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
