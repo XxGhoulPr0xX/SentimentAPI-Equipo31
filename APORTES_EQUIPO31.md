@@ -1,4 +1,4 @@
-# Documentación de Aportes - Proyecto SentimentAPI
+# Documentación de Aportes de Augusto Paz- Proyecto SentimentAPI
 
 > **Equipo 31 - Hackathon Latinoamérica**
 
@@ -196,7 +196,7 @@ Después abrir: **http://localhost:5000/index**
 ---
 ---
 
-# PARTE 2: APORTES - AUGUSTO PAZ
+# PARTE 2: LOG DE ERRORES
 
 > **Fecha:** 5 de Enero de 2026
 > 
