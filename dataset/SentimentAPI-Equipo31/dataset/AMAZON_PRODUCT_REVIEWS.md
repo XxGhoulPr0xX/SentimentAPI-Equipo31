@@ -41,7 +41,6 @@ dts.head()
 Se seleccionan únicamente las columnas necesarias de los 30,846 registros / 16 columnas originales:
 
 Ejemplo del proceso: 
-```python
 dts2 = dts[["review_body", "sentiment"]].copy()
 
 Resultado:
@@ -50,12 +49,9 @@ Dataset reducido: 30,846 registros / 2 columnas.
 ---
 
 ### 🧩 Unión de Columnas
-Se crea una nueva columna text concatenando título y cuerpo de la reseña:
-
-El proceso llevado a cabo fue el siguiente, ayudando a simplificar la estructura y 
+Se crea una nueva columna text concatenando título y cuerpo de la reseña, con el cual ayuda a simplificar la estructura y 
 permite qe el modelo lea un texto completo como lo haría una persona:
 
-```python
 dts2["text"] = dts2["review_body"]
 dts2 = dts2[["text", "sentiment"]]
 
