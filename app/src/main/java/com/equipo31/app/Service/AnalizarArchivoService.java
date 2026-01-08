@@ -1,4 +1,4 @@
-package com.equipo31.app.service;
+package com.equipo31.app.Service;
 
 import com.opencsv.CSVReader;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
-package com.equipo31.app.controller;
+package com.equipo31.app.Controller;
 
 import com.equipo31.app.entity.SentimentRecord;
 import com.equipo31.app.repository.SentimentRecordRepository;
-import com.equipo31.app.service.EstadisticasRegistros;
+import com.equipo31.app.Service.EstadisticasRegistros;
 
 import java.util.List;
 
