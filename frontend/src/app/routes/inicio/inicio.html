@@ -1,6 +1,8 @@
 <app-header></app-header>
 <main>
   <mat-tab-group
+    [selectedIndex]="indexSeleccionado"
+    (selectedIndexChange)="manejarIndexSeleccionado($event)"
     mat-stretch-tabs="false"
     mat-align-tabs="start"
     class="secciones">
@@ -151,7 +153,7 @@
                 <mat-card-title class="card-title">
                   {{
                     datoAlmacenado.createdAt
-                      | date: 'MM/dd/yy, hh:mm a' : '' : 'es-PE'
+                      | date: 'dd/MM/yy, hh:mm a' : '' : 'es-PE'
                   }}
                 </mat-card-title>
               </mat-card-header>

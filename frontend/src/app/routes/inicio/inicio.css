@@ -67,13 +67,13 @@
 
 main {
   flex-grow: 1;
-  padding: 3rem 3rem 0;
+  padding: 3rem;
 }
 
 .seccion-analisis,
 .seccion-historial {
   overflow: hidden;
-  padding: 3rem;
+  padding: 3rem 3rem 0;
   display: flex;
   p {
     margin: 0.5rem 0;

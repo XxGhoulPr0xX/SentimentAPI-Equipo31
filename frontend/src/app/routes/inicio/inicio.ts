@@ -81,23 +81,18 @@ export class Inicio implements OnInit {
   ];
   idiomaAnalisis = 'es';
   formaAnalisis = 'individual';
+  indexSeleccionado = 0;
   archivoCargado = signal<File | null>(null);
   resultadosAnalisis = signal<SentimentResponse[]>([]);
   datosAlmacenados = signal<SentimentResponse[]>([]);
   mensajeError = signal<string | null>(null);
   ngOnInit() {
-    const campoGuardado = sessionStorage.getItem('forma-analisis');
-    if (campoGuardado) {
-      this.formaAnalisis = campoGuardado;
-    }
-    this.cargarDatosAlmacenados();
+    this._cargarSessionStorage();
+    this._cargarDatosAlmacenados();
   }
-  cargarDatosAlmacenados() {
-    this._sentimentApiService.obtenerDatosAlmacenados().subscribe({
-      next: (response) => {
-        this.datosAlmacenados.set(response.reverse());
-      },
-    });
+  manejarIndexSeleccionado(index: number) {
+    this.indexSeleccionado = index;
+    sessionStorage.setItem('tab-seleccionado', String(index));
   }
   cambiarFormaAnlisis(nuevoValor: string) {
     this.formaAnalisis = nuevoValor;
@@ -106,6 +101,7 @@ export class Inicio implements OnInit {
   }
   cambiarIdiomaAnlisis(nuevoValor: string) {
     this.idiomaAnalisis = nuevoValor;
+    sessionStorage.setItem('idioma-analisis', nuevoValor);
     this._sentimentApiService.configurarIdioma(this.idiomaAnalisis).subscribe({
       next: (body) => {
         console.log(body);
@@ -142,7 +138,7 @@ export class Inicio implements OnInit {
                 duration: 10000,
               },
             );
-            this.cargarDatosAlmacenados();
+            this._cargarDatosAlmacenados();
           },
           error: (e: HttpErrorResponse) => {
             let mensaje = 'Ocurrió un error inesperado.';
@@ -190,7 +186,7 @@ export class Inicio implements OnInit {
                 duration: 10000,
               },
             );
-            this.cargarDatosAlmacenados();
+            this._cargarDatosAlmacenados();
           },
           error: (e: HttpErrorResponse) => {
             let mensaje = 'Ocurrió un error inesperado.';
@@ -230,6 +226,27 @@ export class Inicio implements OnInit {
   }
   nuevoAnalisis() {
     this._reiniciar();
+  }
+  private _cargarDatosAlmacenados() {
+    this._sentimentApiService.obtenerDatosAlmacenados().subscribe({
+      next: (response) => {
+        this.datosAlmacenados.set(response.reverse());
+      },
+    });
+  }
+  private _cargarSessionStorage() {
+    const formaGuardada = sessionStorage.getItem('forma-analisis');
+    const idiomaGuardado = sessionStorage.getItem('idioma-analisis');
+    const tabGuardado = sessionStorage.getItem('tab-seleccionado');
+    if (formaGuardada) {
+      this.formaAnalisis = formaGuardada;
+    }
+    if (idiomaGuardado) {
+      this.idiomaAnalisis = idiomaGuardado;
+    }
+    if (tabGuardado) {
+      this.indexSeleccionado = Number(tabGuardado);
+    }
   }
   private _reiniciar() {
     this.resultadosAnalisis.set([]);
