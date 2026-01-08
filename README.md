@@ -1,5 +1,7 @@
 # SentimentAPI-Equipo31
 
+Este proyecto fue desarrollado con fines demostrativos.
+
 # Backend
 
 Este proyecto fue generado con
@@ -183,7 +185,7 @@ http://localhost:5000
 
 ```json
 {
-  "prevision": "POSITIVO",
+  "prevision": "Positivo",
   "probabilidad": 0.84
 }
 ```
@@ -200,7 +202,7 @@ http://localhost:5000
 
 ```json
 {
-  "prevision": "NEGATIVO",
+  "prevision": "Negativo",
   "probabilidad": 0.93
 }
 ```
