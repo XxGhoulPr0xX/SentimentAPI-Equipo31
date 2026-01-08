@@ -54,17 +54,17 @@ Usuario → Frontend → API REST (Spring Boot) → Modelo ONNX → Predicción 
 
 ### Integracion y endpoints
 
-- **API de Análisis:**
+**API de Análisis:**
 - `POST /sentiment-api/analizar-comentario`: Recibe un JSON `{ text: string }`. Retorna `SentimentResponse`.
 - `POST /sentiment-api/analizar-archivo`: Recibe `multipart/form-data` con `file` (.csv) y `columnName`. Retorna una lista de `SentimentResponse`.
 
-- **API de Configuración:**
+**API de Configuración:**
 - `POST /api/config/idioma`: Recibe el parámetro `lang` (ej. "es", "en") para cambiar el contexto del `SentimentService`.
 
-- **API de Estadísticas:**
+**API de Estadísticas:**
 - `GET /stats/list`: Retorna el historial completo de análisis en JSON e imprime un reporte detallado en la consola del servidor.
 
-- **Manejo de Errores:**
+**Manejo de Errores:**
 - Implementación de `ApiExceptionHandler` para capturar `MethodArgumentNotValidException` y devolver respuestas `400 Bad Request` estructuradas cuando fallan las validaciones de entrada.
 
 ## Ejecución y pruebas del Backend
