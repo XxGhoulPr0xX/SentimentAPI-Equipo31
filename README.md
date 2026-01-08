@@ -30,6 +30,17 @@ Usuario → Frontend → API REST (Spring Boot) → Modelo ONNX → Predicción 
 4. Se procesa la salida del modelo (probabilidades).
 5. Se retorna la predicción y se persiste el resultado.
 
+```mermaid
+flowchart LR
+    A[Usuario escribe comentario] --> B[Frontend HTML/JS]
+    B -->|POST /sentiment| C[SentimentController]
+    C --> D[SentimentService]
+    D -->|Ejecuta inferencia| E[Modelo ONNX]
+    E -->|Resultado| D
+    D --> C
+    C -->|JSON Response| B
+    B -->|Muestra resultado| F[Badge con color]
+```
 
 ### Servicios y logica central
 
@@ -195,6 +206,16 @@ http://localhost:5000
 ```
 
 ---
+
+### Mensajes de error implementados
+
+| Código | Mensaje | Descripción |
+|--------|---------|-------------|
+| 0 | No se pudo conectar | Backend caído o sin internet |
+| 400 | Solicitud inválida | Datos mal formados |
+| 500 | Error interno | Problema en el servidor |
+| 503 | Servicio no disponible | Servicio temporalmente caído |
+
 
 ### Base de datos en memoria (H2)
 
