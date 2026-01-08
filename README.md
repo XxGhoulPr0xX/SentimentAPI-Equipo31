@@ -69,12 +69,13 @@ Usuario → Frontend → API REST (Spring Boot) → Modelo ONNX → Predicción 
 
 ## Ejecución y pruebas del Backend
 
-### Requisitos previos
+### Dependencias y versiones relevantes
 
 - **Java JDK 17 o superior** (recomendado para Spring Boot 4.x)
 - **Maven 3.9+** (o usar el wrapper `mvnw`)
-- Sistema operativo: Windows, Linux o macOS
-
+- **ONNX Runtime 1.19.0**
+- **h2database**
+- **opencsv 5.9**
 
 ### Ejecución del servidor de desarrollo
 
