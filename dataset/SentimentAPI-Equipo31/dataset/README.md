@@ -5,11 +5,13 @@
 
 Este dataset contiene opiniones y reseñas de turistas sobre hoteles en **Punta Cana, República Dominicana**, recopiladas principalmente de **TripAdvisor**. Forma parte del proyecto **SentimentAPI-Equipo31**, enfocado en análisis de sentimientos para aplicaciones de turismo.
 
-Ideal para tareas de:
-- Análisis de sentimiento (positivo/negativo)
-- Procesamiento de lenguaje natural (NLP)
-- Machine Learning en reseñas de turismo
-- Estudios sobre experiencia del cliente en el sector hotelero
+## 💡 Casos de Uso
+Este dataset puede utilizarse en:
+- Entrenamiento de modelos de análisis de sentimiento en español.
+- Desarrollo de APIs para clasificación de opiniones turísticas.
+- Análisis de reputación hotelera.
+- Estudios académicos sobre experiencia del cliente.
+- Proyectos de Machine Learning y NLP aplicados al sector turismo.
 
 ## 📊 Descripción del Dataset
 
@@ -32,13 +34,12 @@ El dataset fue recopilado mediante web scraping ético de reseñas públicas en 
 
 | Columna          | Descripción                                      | Ejemplo                              |
 |------------------|--------------------------------------------------|--------------------------------------|
-| `hotel_name`     | Nombre del hotel                                 | "Hard Rock Hotel & Casino Punta Cana" |
-| `review_title`   | Título de la reseña                              | "¡Paraíso en la tierra!"            |
-| `review_text`    | Texto completo de la reseña                      | "El servicio fue excelente, las playas..." |
+| `hotel_name`     | Nombre del hotel                                 | "Hard Rock Hotel & Casino Punta Cana"|
+| `location`       | Ubicación del hotel                              | "Villaviciosa, Spain"                |
+| `wrote`          | Fecha en que se escribió la reseña               | "October 2019"                       |
 | `rating`         | Calificación (1-5 estrellas)                     | 5                                    |
-| `date`           | Fecha de la reseña                               | 2023-07-15                           |
-| `author`         | Nombre del autor (anonimizado si aplica)         | "Traveler123"                        |
-| `sentiment`      | Etiqueta de sentimiento (positivo/negativo/neutral) *opcional* | "positivo"                           |
+| `title`          | Título de la reseña                              | "HOTEL de la EXCELENCIA"             |
+| `review_text`    | Texto completo de la reseña                      | "Muy buen hotel. Cumple con todos los requisitos"                        |
 
 ## 🛠️ Proceso de Creación (basado en el Notebook Colab)
 
@@ -88,3 +89,18 @@ Proyecto 1: SentimentAPI — Análisis de Sentimientos de Feedbacks
 Desarrollado por H12-25-L-Equipo 31
 
 ¡Gracias por usar este dataset! 🌟 Si te fue útil, deja una ⭐ en el repo.
+```
+## 📏 Evaluación del Modelo
+El desempeño del modelo fue evaluado utilizando un conjunto de prueba no visto durante el entrenamiento, aplicando métricas estándar de clasificación como accuracy, precision, recall y F1-score.
+
+## ⚠️ Limitaciones del Dataset
+- Las reseñas provienen de una única plataforma (TripAdvisor).
+- El dataset original presenta un desbalance natural entre clases. (Durante el análisis, se aplicaron técnicas de balanceo para reducir el sesgo en el entrenamiento del modelo.)
+- La interpretación del sentimiento puede variar según el contexto cultural.
+- El etiquetado automático (si se utiliza) no reemplaza una anotación humana.
+
+## 🔁 Reproducibilidad
+- El análisis fue desarrollado en Google Colab.
+- El dataset se carga directamente desde este repositorio, lo que permite reproducir los resultados ejecutando el notebook en el mismo orden.
+
+
