@@ -1,4 +1,4 @@
-package com.equipo31.app.service;
+package com.equipo31.app.Service;
 
 import com.equipo31.app.entity.SentimentRecord;
 import org.slf4j.Logger;
