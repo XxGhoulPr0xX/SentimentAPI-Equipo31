@@ -5,13 +5,14 @@ import {
   SentimentRequest,
   SentimentResponse,
 } from '../interfaces/sentiment-api';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SentimentApiService {
   private _httpCliente = inject(HttpClient);
-  private _url = 'http://localhost:5000';
+  private _url = environment.apiUrl;
 
   analizarComentario(body: SentimentRequest) {
     return this._httpCliente.post<SentimentResponse>(

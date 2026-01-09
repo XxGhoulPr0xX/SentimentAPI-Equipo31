@@ -359,3 +359,69 @@ Invoke-RestMethod -Uri "http://localhost:5000/sentiment-api/analizar-comentario"
 - Los cambios del frontend se recargan automáticamente (hot reload)
 - Los cambios del backend requieren reiniciar (`.\mvnw clean package -DskipTests` + `.\mvnw spring-boot:run`)
 - La validación es de "defensa en profundidad": cliente Y servidor validan
+
+---
+
+# PARTE 3: Despliegue del Servidor (Deploy)
+
+> **Fecha:** 9 de Enero de 2026
+>
+> Despliegue de la aplicación en la nube para evaluación del jurado.
+
+---
+
+## 1. Cambio de Estrategia: De Oracle OCI a Render
+
+Inicialmente, el objetivo era desplegar en **Oracle Cloud Infrastructure (OCI)** para optar por el premio extra del hackathon. Sin embargo, surgieron inconvenientes insalvables con la validación de la tarjeta de crédito/débito en el registro de Oracle (no aceptaba tarjetas prepagas ni de terceros sin riesgo de bloqueo).
+
+Para asegurar que el proyecto estuviera online y funcional para la evaluación, tomé la decisión ejecutiva de migrar la estrategia de despliegue a **Render.com**.
+
+---
+
+## 2. Dockerización del Backend
+
+Dado que Render maneja servicios web de forma eficiente con contenedores, tuve que "dockerizar" nuestra aplicación Spring Boot.
+
+**Acciones realizadas:**
+- Creación del archivo `Dockerfile` en el directorio `app/`.
+- Configuración de un build multi-stage para optimizar el tamaño de la imagen:
+  1. **Stage Build:** Usa Maven y JDK 21 para compilar el proyecto y generar el `.jar`.
+  2. **Stage Run:** Usa una imagen ligera de JDK 21 Alpine para ejecutar la aplicación.
+
+```dockerfile
+# Resumen del Dockerfile creado
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+# ... copiado de archivos y compilación ...
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jdk-alpine
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+---
+
+## 3. Configuración del Frontend para Producción
+
+Para que el Frontend (Angular) funcionara en la nube y se conectara al Backend desplegado:
+
+1.  **Variables de Entorno:**
+    - Se crearon los archivos `src/environments/environment.ts` (local) y `src/environments/environment.prod.ts` (producción).
+    - En producción, la URL de la API apunta al servicio de Render (`https://sentiment-api-backend.onrender.com`).
+
+2.  **Angular Build:**
+    - Se configuró `angular.json` para reemplazar el archivo de entorno automáticamente al ejecutar `npm run build -- --configuration=production`.
+
+3.  **Servicio de Angular:**
+    - Se refactorizó `SentimentApiService` para usar la variable `environment.apiUrl` en lugar de la URL hardcodeada a localhost.
+
+---
+
+## 4. Estado Final del Despliegue
+
+La aplicación quedó desplegada en dos servicios vinculados en Render:
+
+1.  **Backend (Web Service):** Ejecutando Spring Boot via Docker.
+2.  **Frontend (Static Site):** Sirviendo los archivos compilados de Angular.
+
+**Resultado:** El proyecto es accesible públicamente, cumpliendo con el requisito fundamental de disponibilidad para los jurados.
