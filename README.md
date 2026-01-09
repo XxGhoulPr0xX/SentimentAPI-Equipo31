@@ -41,7 +41,6 @@ flowchart LR
     E -->|Resultado| D
     D --> C
     C -->|JSON Response| B
-    B -->|Muestra resultado| F[Badge con color]
 ```
 
 ### Servicios y logica central
