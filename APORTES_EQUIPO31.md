@@ -425,3 +425,23 @@ La aplicación quedó desplegada en dos servicios vinculados en Render:
 2.  **Frontend (Static Site):** Sirviendo los archivos compilados de Angular.
 
 **Resultado:** El proyecto es accesible públicamente, cumpliendo con el requisito fundamental de disponibilidad para los jurados.
+
+---
+
+## 5. Solución de Problemas Técnicos (Troubleshooting)
+
+Durante el proceso de despliegue surgieron tres desafíos críticos que fueron resueltos para asegurar la estabilidad:
+
+### A. Error de "Pantalla Blanca" (Missing Index)
+- **Problema:** La configuración inicial de Angular (`angular.json`) no incluía la propiedad `"index"`, por lo que el proceso de compilación generaba los scripts JS pero no el archivo `index.html` principal.
+- **Solución:** Se corrigió `angular.json` agregando `"index": "src/index.html"` en la configuración de build, permitiendo que Render sirviera la aplicación correctamente.
+
+### B. Bloqueo de Conexión (CORS)
+- **Problema:** El navegador bloqueaba las peticiones del Frontend hacia el Backend debido a que residen en dominios diferentes en Render.
+- **Solución:** Se implementó la configuración de **Cross-Origin Resource Sharing (CORS)** en el Backend Spring Boot, añadiendo la anotación `@CrossOrigin("*")` en `SentimentController.java`.
+
+### C. Error de Enrutamiento al Recargar (Hash Strategy)
+- **Problema:** Al ser una Single Page Application (SPA), la navegación profunda (ej. `/inicio`) funcionaba virtualmente, pero al recargar la página (F5), el servidor devolvía un error 404 porque buscaba un archivo físico inexistente.
+- **Solución:** Se migró la estrategia de enrutamiento de Angular a `HashLocationStrategy`.
+    - Las URLs ahora tienen el formato `/#/inicio`.
+    - Esto garantiza que el servidor siempre reciba peticiones a la raíz (`/`), delegando el enrutamiento interno al cliente y eliminando los errores de "Not Found" en la nube.
