@@ -1,0 +1,16 @@
+services:
+  # Servidor de Datos (Backend)
+  api-server:
+    build: ./app #
+    image: spring-boot-backend:latest
+    ports:
+      - "8080:8080"
+
+  # Servidor Web (Frontend)
+  web-client:
+    build: ./frontend
+    image: angular-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - api-server
