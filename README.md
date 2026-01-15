@@ -104,7 +104,7 @@ mvn spring-boot:run
 El servidor se iniciará por defecto en:
 
 ```
-http://localhost:5000
+http://localhost:8080
 ```
 
 ## Uso de la API de análisis de sentimientos
@@ -241,7 +241,7 @@ La API puede probarse mediante:
 ### Ejemplo con cURL
 
 ```bash
-curl -X POST http://localhost:5000/sentiment-api/analizar-comentario \
+curl -X POST http://localhost:8080/sentiment-api/analizar-comentario \
 -H "Content-Type: application/json" \
 -d "{\"text\":\"I really like this application\"}"
 ```
@@ -272,7 +272,7 @@ curl -X POST http://localhost:5000/sentiment-api/analizar-comentario \
 Este proyecto fue generado con
 [Angular CLI](https://github.com/angular/angular-cli) versión **20.3.13**.
 
-## 📌 Resumen
+## Resumen
 
 El frontend está implementado en **Angular** y provee la interfaz para consumir
 el servicio de análisis de sentimientos. Soporta:
@@ -285,7 +285,7 @@ el servicio de análisis de sentimientos. Soporta:
 - Modo **claro/oscuro** y persistencia de preferencias (`localStorage` y
   `sessionStorage`).
 
-## ✅ Estado actual
+## Estado actual
 
 - Interfaz principal (`Inicio`) con:
   - Formulario para análisis individual (validación: mínimo 10 caracteres).
@@ -303,22 +303,22 @@ el servicio de análisis de sentimientos. Soporta:
 - Soporte para cargar y analizar archivos CSV y visualizar un listado de
   resultados históricos (consulta a `/stats/list`).
 
-## 🔧 Estructura y rutas principales
+## Estructura y rutas principales
 
 - `src/app/routes/inicio` — Componente principal (`Inicio`)
   - `inicio.ts`, `inicio.html`, `inicio.css`
 - `src/app/core/services` — Servicios centrales
   - `sentiment-api-service.ts` — cliente HTTP (base por defecto:
-    `http://localhost:5000`)
+    `http://localhost:8080`)
   - `theme-service.ts` — gestión de tema
 - `src/app/shared/ui` — componentes reutilizables (header, footer,
   `grafico-pie`, `campo-seleccion`, `resultados-analisis`)
 - `src/app/core/interfaces/sentiment-api.ts` — tipos `SentimentRequest` y
   `SentimentResponse`
 
-## 🔗 Endpoints usados por el frontend
+## Endpoints usados por el frontend
 
-- Base por defecto: `http://localhost:5000` (definida en `SentimentApiService`)
+- Base por defecto: `http://localhost:8080` (definida en `SentimentApiService`)
 - POST `/sentiment-api/analizar-comentario` — payload: `{ text }` → devuelve
   `SentimentResponse`
 - POST `/sentiment-api/analizar-archivo` — `multipart/form-data` con campos
@@ -327,10 +327,10 @@ el servicio de análisis de sentimientos. Soporta:
 - GET `/stats/list` — obtiene lista de resultados almacenados
 
 > Nota: Para cambiar la URL del backend, editar
-> `private _url = 'http://localhost:5000'` en
+> `private _url = 'http://localhost:8080'` en
 > `src/app/core/services/sentiment-api-service.ts`.
 
-## 🧪 Validaciones y comportamiento
+## Validaciones y comportamiento
 
 - Texto individual: mínimo 10 caracteres y no puede ser solo espacios.
 - Análisis masivo: se requiere un archivo implicando un CSV válido y que la
@@ -339,3 +339,20 @@ el servicio de análisis de sentimientos. Soporta:
   servicio no disponible).
 - Sesión: la forma de análisis, el idioma y la pestaña seleccionada se guardan
   en `sessionStorage` para mejorar la UX.
+
+
+---
+
+# Despliegue con Docker
+
+El proyecto incluye soporte para **Docker** y **Docker Compose**, lo que facilita la orquestación de los servicios de backend y frontend.
+
+### Docker Compose
+
+Para levantar toda la infraestructura (Backend + Frontend) de manera simplificada, utiliza el archivo `docker-compose.yml`:
+
+```bash
+# Para construir y levantar los contenedores
+docker-compose up --build
+
+```

@@ -6,3 +6,5 @@ target/
 .idea/
 env
 __pycache__
+hola esp.csv
+hola.csv
