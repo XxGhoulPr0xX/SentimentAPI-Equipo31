@@ -144,6 +144,8 @@
     </mat-tab>
     <mat-tab label="HISTORIAL">
       <div class="seccion-historial">
+        <app-resumen-estadistico [allItems]="datosAlmacenados()" />
+        <!-- <div class="datos-almacenados"> -->
         @if (datosAlmacenados().length === 0) {
           No hay datos almacenados.
         } @else {
@@ -169,7 +171,9 @@
           }
         }
       </div>
+      <!-- </div> -->
     </mat-tab>
   </mat-tab-group>
 </main>
 <app-footer></app-footer>
+<app-scroll-to-top />

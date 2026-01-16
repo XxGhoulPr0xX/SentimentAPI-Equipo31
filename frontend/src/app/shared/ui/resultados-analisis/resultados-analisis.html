@@ -5,29 +5,7 @@
   </div>
 } @else {
   @if (formaAnalisis() === 'masiva') {
-    <div class="resumen-estadistico">
-      <div class="resumen-columna">
-        <div><span>Total de comentarios</span></div>
-
-        <div>{{ allItems().length }}</div>
-      </div>
-
-      <div class="resumen-columna">
-        <div><span>Distribución de sentimientos</span></div>
-
-        <div>
-          <app-grafico-pie [datosGraficoSignal]="datosGraficoPie()" />
-        </div>
-      </div>
-
-      <div class="resumen-columna">
-        <div><span>Sentimiento predominante</span></div>
-
-        <div>
-          <app-etiqueta-sentimiento [sentimiento]="sentimientoPredominante()" />
-        </div>
-      </div>
-    </div>
+    <app-resumen-estadistico [allItems]="allItems()" />
   }
 
   <div class="tabla-resultados">

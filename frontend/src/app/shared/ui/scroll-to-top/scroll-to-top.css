@@ -1,0 +1,18 @@
+:host {
+  display: contents;
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+@media (max-width: 600px) {
+  .scroll-to-top {
+    bottom: 5px;
+    right: 5px;
+  }
+}

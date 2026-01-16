@@ -5,6 +5,7 @@
 }
 
 .card {
+  max-width: 1600px;
   flex: 1 1 auto;
   background-color: var(--mat-sys-surface-container);
   border-radius: 4px;
@@ -80,9 +81,14 @@ main {
   }
 }
 
-.seccion-historial {
+.seccion-historial,
+.datos-almacenados {
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.datos-almacenados {
+  display: flex;
 }
 
 .seccion-analisis {

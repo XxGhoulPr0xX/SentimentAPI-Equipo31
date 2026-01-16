@@ -32,6 +32,8 @@ import {
 import { Footer } from '../../shared/ui/footer/footer';
 import { Header } from '../../shared/ui/header/header';
 import { ResultadosAnalisis } from '../../shared/ui/resultados-analisis/resultados-analisis';
+import { ResumenEstadistico } from '../../shared/ui/resumen-estadistico/resumen-estadistico';
+import { ScrollToTop } from '../../shared/ui/scroll-to-top/scroll-to-top';
 import { SentimentApiService } from './../../core/services/sentiment-api-service';
 
 @Component({
@@ -52,6 +54,8 @@ import { SentimentApiService } from './../../core/services/sentiment-api-service
     MatCardModule,
     DatePipe,
     DecimalPipe,
+    ResumenEstadistico,
+    ScrollToTop,
   ],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
