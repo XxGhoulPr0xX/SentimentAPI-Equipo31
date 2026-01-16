@@ -16,7 +16,7 @@ export class Footer {
   integrantes: Integrantes[] = [
     {
       fullName: 'Francisco Javier Alvarado Marquez',
-      linkedin: '',
+      linkedin: 'https://www.linkedin.com/in/javierma1109',
     },
     {
       fullName: 'Jose Angel Luna Delgado',
@@ -45,14 +45,6 @@ export class Footer {
     {
       fullName: 'Augusto Paz',
       linkedin: 'https://github.com/AugustoPaz13',
-    },
-    {
-      fullName: 'Christian Enrique Polo Melendez',
-      linkedin: '',
-    },
-    {
-      fullName: 'Diego Quijano Tasayco',
-      linkedin: '',
     },
   ];
 }
