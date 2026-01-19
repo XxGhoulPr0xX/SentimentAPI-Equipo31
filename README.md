@@ -356,3 +356,38 @@ Para levantar toda la infraestructura (Backend + Frontend) de manera simplificad
 docker-compose up --build
 
 ```
+
+---
+
+# Pruebas y Aseguramiento de Calidad
+
+Para garantizar la estabilidad y el correcto funcionamiento del núcleo de procesamiento, se ha implementado una suite completa de pruebas automatizadas utilizando **JUnit 5** y **Spring Boot Test**.
+
+## Pruebas Unitarias (Unit Testing)
+Se valida la lógica de los componentes de forma aislada, asegurando que cada pieza cumpla con su responsabilidad única.
+
+- **Validación de DTOs (`SentimentRequestTest`):**
+  - Verificación de restricciones de entrada (JSR-303).
+  - Comprobación de casos borde: textos nulos, vacíos, solo espacios en blanco o longitud inferior a la permitida (3 caracteres).
+- **Entidades (`SentimentRecordTest` & `SentimentResponseTest`):**
+  - Verificación de constructores, getters y setters.
+  - Consistencia en la generación de fechas (`createdAt`) y manejo de probabilidades.
+- **Persistencia (`SentimentRecordRepositoryTest`):**
+  - Pruebas sobre la base de datos en memoria H2 utilizando `@DataJpaTest`.
+  - Validación de operaciones CRUD (Guardar, Buscar por ID, Contar por predicción, Eliminar).
+
+### Pruebas de Integración (Integration Testing)
+Se valida la interacción entre las distintas capas del sistema (Controlador → Servicio → Repositorio) utilizando `MockMvc` para simular peticiones HTTP reales.
+
+- **Controlador (`SentimentControllerIntegrationTest`):**
+  - **Flujo Exitoso:** Verifica que una petición `POST` válida retorne estado `200 OK`, la estructura JSON correcta y persista el registro en la base de datos.
+  - **Manejo de Errores:** Verifica que peticiones inválidas (texto vacío o muy corto) retornen estado `400 Bad Request`.
+  - **Integridad de Datos:** Asegura que la respuesta enviada al cliente coincida exactamente con lo almacenado en la base de datos.
+  - **Casos Complejos:** Pruebas con textos largos, caracteres especiales y múltiples peticiones secuenciales.
+
+### Ejecución de las pruebas
+
+Para ejecutar la suite completa de pruebas y verificar el reporte de resultados, utiliza el siguiente comando en el directorio del backend:
+
+```bash
+mvn test

@@ -69,7 +69,6 @@ class SentimentRecordTest {
     LocalDateTime now = LocalDateTime.now();
 
     SentimentRecord record = new SentimentRecord(text, prevision, probabilidad);
-    record.setCreatedAt(now);
 
     assertEquals(text, record.getText());
     assertEquals(prevision, record.getPrevision());
