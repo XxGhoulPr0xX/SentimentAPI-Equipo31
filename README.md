@@ -388,3 +388,4 @@ Para ejecutar la suite completa de pruebas y verificar el reporte de resultados,
 
 ```bash
 mvn test
+```
