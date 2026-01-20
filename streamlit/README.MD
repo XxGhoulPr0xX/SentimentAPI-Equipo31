@@ -35,23 +35,15 @@ python -m venv env
 source env/bin/activate
 
 ```
-### 3. Archivo de Dependencias (`requirements.txt`)
+### 3. Instalación de Dependencias
 
-Para asegurar que el proyecto funcione, crea un archivo llamado `requirements.txt` en la raíz de la carpeta con el siguiente contenido:
+Es necesario instalar las librerías listadas en el archivo de configuración incluido para asegurar el correcto funcionamiento del entorno.
 
-```text
-streamlit
-pandas
-joblib
-scikit-learn==1.6.1
-numpy
+Ejecuta el siguiente comando en la terminal del entorno virtual dentro de la carpeta del proyecto:
 
+```bash
+pip install -r requirements.txt
 ```
-
-> **Nota:** Se especifica `scikit-learn==1.6.1` para evitar los errores de compatibilidad con tus modelos `.pkl`.
-
-
----
 
 ## Cómo Correr la Aplicación
 
