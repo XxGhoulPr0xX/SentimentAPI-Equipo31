@@ -234,16 +234,13 @@ Durante la ejecución:
 
 La API puede probarse mediante:
 
-- **Postman**
 - **cURL**
 - **Interfaz web Angular**
 
 ### Ejemplo con cURL
 
 ```bash
-curl -X POST http://localhost:8080/sentiment-api/analizar-comentario \
--H "Content-Type: application/json" \
--d "{\"text\":\"I really like this application\"}"
+curl -X POST http://localhost:8080/sentiment-api/analizar-comentario -H "Content-Type: application/json" -d "{\"text\": \"Excelente servicio, la atención fue rápida y la comida estaba deliciosa. ¡Muy recomendado!\"}"
 ```
 
 ### ¿Cómo el modelo llega a la predicción?
