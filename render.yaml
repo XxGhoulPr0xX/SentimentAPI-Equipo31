@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: api-server
+    runtime: docker
+    dockerContext: ./app
+    dockerfilePath: ./app/Dockerfile
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+  - type: web
+    name: web-client
+    runtime: docker
+    dockerContext: ./frontend
+    dockerfilePath: ./frontend/dockerfile 
+    plan: free
+    envVars:
+      - key: API_URL
+        fromService:
+          name: api-server
+          type: web
+          property: host
