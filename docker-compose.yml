@@ -10,5 +10,7 @@ services:
     image: angular-frontend:latest
     ports:
       - "80:80"
+    environment:
+      - BACKEND_URL=http://api-server:8080
     depends_on:
       - api-server
